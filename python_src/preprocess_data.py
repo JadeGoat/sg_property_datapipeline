@@ -90,11 +90,11 @@ if __name__ == "__main__":
     
     raw_data = read_data_from_db(db_engine, src_table_name)
     cleaned_data = preprocess_data(raw_data)
-    #save_data_to_db(db_engine, dst_table_name, cleaned_data)
+    save_data_to_db(db_engine, dst_table_name, cleaned_data)
 
     dst_table_name = 'hdb_resale_avg_year'
     grouped_data = average_data_by_year(cleaned_data)
-    #save_data_to_db(db_engine, dst_table_name, grouped_data)
+    save_data_to_db(db_engine, dst_table_name, grouped_data)
 
     dst_table_name = 'hdb_resale_avg_town'
     grouped_data = average_data_by_town(cleaned_data)
