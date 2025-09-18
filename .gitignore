@@ -1,0 +1,9 @@
+# exclude data files
+data/ResaleFlatPrices/*.csv
+
+# exclude python cache folder and env file
+python_src/__pycache__/
+python_src/.env
+
+# exclude python package env folder
+sg_property_env/
