@@ -1,5 +1,56 @@
 import pandas as pd
+from SVY21 import SVY21
 from mysql_helper import get_db_engine, read_data_from_db, save_data_to_db
+
+def preprocess_carpark_info_data(data):
+    
+    # Initialize SVY21 class
+    cv = SVY21()
+    
+    process_data = data.copy()
+    process_data[['lat', 'lon']] = process_data.apply(
+        lambda row: pd.Series(cv.computeLatLon(row['x_coord'], row['y_coord'])),
+        axis=1
+    )
+
+    # Clean up the very dirty 'address' column
+    process_data['address'] = process_data['address'].str.replace(r'\s*[/,&-]\s+', '/', regex=True)
+    process_data['address'] = process_data['address'].str.replace(' TO ','-')
+    process_data['address'] = process_data['address'].str.replace('A-B','A/B')
+    process_data['address'] = process_data['address'].str.replace('BLKS','BLK')
+    process_data['address'] = process_data['address'].str.replace(' BETWEEN ','')
+    process_data['address'] = process_data['address'].str.replace(' AND ',',')
+    process_data['address'] = process_data['address'].str.replace('BED0K','BEDOK')
+
+    # ------------------
+    # Regex explaination
+    # ------------------
+    # (?:\d+[A-Za-z]?)
+    # Example: 25, 25A
+    # (?:[/,\-]\s*(?:\d+[A-Za-z]?|[A-Za-z]))*
+    # - [/,\-]\s*: combination of either slash,comma,dash
+    # - (?:\d+[A-Za-z]?|[A-Za-z]): number follow by optional alpha or just alpha
+    # Part2: eg. 25/26, 25A/26B, 25-30, 25A-26B, 25/26,30, 25A/B/C
+
+    # Split 'address' into' block' and 'town_and_street'
+    pattern = r'^(?:(BLK|BLOCK)\s*)?((?:\d+[A-Za-z]?)(?:[/,\-]\s*(?:\d+[A-Za-z]?|[A-Za-z]))*)\s+(.*)'
+    process_data[['prefix', 'block', 'town_and_street']] = process_data['address'].str.extract(pattern)
+
+    # ------------------
+    # Regex explaination
+    # ------------------
+    # (STREET|AVENUE)\s+(\d+(?:/\d|)?)
+    # Example: STREET 1, STREET 1/2, AVENUE 1, AVENUE 1/2
+
+    # Split into town, street_type, street_number
+    pattern = r'^(.*?)(STREET| ST|AVENUE|CENTRAL)\s+(\d+(?:/\d|)?)\b'
+    process_data[['town', 'street_type', 'street_number']] = process_data['town_and_street'].str.extract(pattern)
+
+    # Final cleanup on 'town' column
+    process_data['town'] = process_data['town'].str.replace(r'\s*(ROAD|RD|/)\s*', '', regex=True)
+    process_data['town'] = process_data['town'].str.strip()
+
+    return process_data
 
 def preprocess_hdb_rental_data(data):
     process_data = data.copy()
@@ -138,7 +189,8 @@ def process_carpark_info(db_engine):
     dst_table_name = 'carpark_info_clean'
 
     raw_data = read_data_from_db(db_engine, src_table_name)
-    save_data_to_db(db_engine, dst_table_name, raw_data)
+    cleaned_data = preprocess_carpark_info_data(raw_data)
+    save_data_to_db(db_engine, dst_table_name, cleaned_data)
 
 def process_hdb_rental_price(db_engine):
 
@@ -184,5 +236,3 @@ if __name__ == "__main__":
     process_carpark_info(db_engine)
     process_hdb_rental_price(db_engine)
     process_hdb_resale_price(db_engine)
-    
-    
