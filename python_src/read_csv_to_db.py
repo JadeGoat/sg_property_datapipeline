@@ -20,9 +20,22 @@ if __name__ == "__main__":
 
     # Database details
     db_config = get_db_config()
-    db_table_name = 'hdb_resale'
+    
+    db_table_name_array = [
+        'carpark_info', 
+        'hdb_rental', 
+        'hdb_resale'
+    ]
+    csv_filename_array = [
+        "carpark_data.csv",
+        "hdb_rental_data.csv",
+        "hdb_resale_data.csv",
+    ]
 
-    # Append filename to working directory
-    csv_file = os.path.join(os.getcwd(), '..', 'data', 'hdb_resale_data.csv')
+    for filename, db_table_name in zip(csv_filename_array, db_table_name_array):
+        
+        # Append filename to working directory
+        csv_filename = os.path.join(os.getcwd(), '..', 'data', filename)
 
-    load_csv_into_database(csv_file, db_config, db_table_name)
+        print("Loading " + filename + " to database table " + db_table_name + "...")
+        load_csv_into_database(csv_filename, db_config, db_table_name)
