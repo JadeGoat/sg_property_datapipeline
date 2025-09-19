@@ -47,20 +47,23 @@ def download_csv_from_data_gov_sg(dataset_id, csv_filename):
 
 if __name__ == "__main__":
 
-    # Append filename to working directory
-    csv_filename = os.path.join(os.getcwd(), "..", "data", "hdb_resale_data.csv")
+    dataset_id_array = [
+        "d_23f946fa557947f93a8043bbef41dd09",
+        "d_c9f57187485a850908655db0e8cfe651",
+        "d_8b84c4ee58e3cfc0ece0d773c8ca6abc",
+    ]
+    csv_filename_array = [
+        "carpark_data.csv",
+        "hdb_rental_data.csv",
+        "hdb_resale_data.csv",
+    ]
 
-    dataset_id = "d_8b84c4ee58e3cfc0ece0d773c8ca6abc"
-    download_csv_from_data_gov_sg(dataset_id, csv_filename)
+    for filename, dataset_id in zip(csv_filename_array, dataset_id_array):
+        
+        # Append filename to working directory
+        csv_filename = os.path.join(os.getcwd(), "..", "data", filename)
 
-    # Append filename to working directory
-    csv_filename = os.path.join(os.getcwd(), "..", "data", "hdb_rental_data.csv")
+        print("Downloading " + filename + "...")
+        download_csv_from_data_gov_sg(dataset_id, csv_filename)
 
-    dataset_id = "d_c9f57187485a850908655db0e8cfe651"
-    download_csv_from_data_gov_sg(dataset_id, csv_filename)
     
-    # Append filename to working directory
-    csv_filename = os.path.join(os.getcwd(), "..", "data", "carpark_data.csv")
-
-    dataset_id = "d_23f946fa557947f93a8043bbef41dd09"
-    download_csv_from_data_gov_sg(dataset_id, csv_filename)
