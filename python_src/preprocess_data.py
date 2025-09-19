@@ -1,7 +1,21 @@
 import pandas as pd
 from mysql_helper import get_db_engine, read_data_from_db, save_data_to_db
 
-def preprocess_data(data):
+def preprocess_hdb_rental_data(data):
+    process_data = data.copy()
+
+    # Split 'month' column and convert to integer
+    columns_name = ['approval_year', 'approval_month']
+    process_data[columns_name] = process_data['rent_approval_date'].str.split('-', expand=True)
+    process_data['approval_year'] = pd.to_numeric(process_data['approval_year'], errors='coerce')
+    process_data['approval_month'] = pd.to_numeric(process_data['approval_month'], errors='coerce')
+
+    # Drop unnecessary columns
+    process_data.drop(columns='rent_approval_date', inplace=True)
+
+    return process_data
+
+def preprocess_hdb_resale_data(data):
     process_data = data.copy()
 
     # Split 'month' column and convert to integer
@@ -30,7 +44,24 @@ def preprocess_data(data):
 
     return process_data
 
-def average_data_by_year(data):
+def average_hdb_rental_data_by_year(data):
+    process_data = data.copy()
+
+    # Grouped resale price by year and town
+    grouped_columns = ['approval_year', 'town']
+    agg_methods = {'monthly_rent': ['mean', 'median']}
+    final_data = process_data.groupby(grouped_columns).agg(agg_methods)
+
+    # Final cleanup on grouped data
+    final_data = final_data.round(2)
+    final_data.columns = ['_'.join(col).strip() 
+                          if isinstance(col, tuple) else col 
+                          for col in final_data.columns]
+    final_data = final_data.reset_index()
+
+    return final_data
+
+def average_hdb_resale_data_by_year(data):
     process_data = data.copy()
 
     # Feature engineered new resale price
@@ -49,12 +80,31 @@ def average_data_by_year(data):
 
     # Final cleanup on grouped data
     final_data = final_data.round(2)
-    final_data.columns = ['_'.join(col).strip() if isinstance(col, tuple) else col for col in final_data.columns]
+    final_data.columns = ['_'.join(col).strip() 
+                          if isinstance(col, tuple) else col 
+                          for col in final_data.columns]
     final_data = final_data.reset_index()
 
     return final_data
 
-def average_data_by_town(data):
+def average_hdb_rental_data_by_town(data):
+    process_data = data.copy()
+
+    # Grouped resale price by year and town
+    grouped_columns = ['approval_year', 'town', 'flat_type']
+    agg_methods = {'monthly_rent': ['mean', 'median']}
+    final_data = process_data.groupby(grouped_columns).agg(agg_methods)
+
+    # Final cleanup on grouped data
+    final_data = final_data.round(2)
+    final_data.columns = ['_'.join(col).strip() 
+                          if isinstance(col, tuple) else col 
+                          for col in final_data.columns]
+    final_data = final_data.reset_index()
+
+    return final_data
+
+def average_hdb_resale_data_by_town(data):
     process_data = data.copy()
 
     # Feature engineered new resale price
@@ -74,28 +124,65 @@ def average_data_by_town(data):
 
     # Final cleanup on grouped data
     final_data = final_data.round(2)
-    final_data.columns = ['_'.join(col).strip() if isinstance(col, tuple) else col for col in final_data.columns]
+    final_data.columns = ['_'.join(col).strip() 
+                          if isinstance(col, tuple) else col 
+                          for col in final_data.columns]
     final_data = final_data.reset_index()
 
     return final_data
 
-if __name__ == "__main__":
+def process_carpark_info(db_engine):
 
-    # Create SQLAlchemy engine
-    db_engine = get_db_engine()
+    # Database table name
+    src_table_name = 'carpark_info'
+    dst_table_name = 'carpark_info_clean'
+
+    raw_data = read_data_from_db(db_engine, src_table_name)
+    save_data_to_db(db_engine, dst_table_name, raw_data)
+
+def process_hdb_rental_price(db_engine):
+
+    # Database table name
+    src_table_name = 'hdb_rental'
+    dst_table_name = 'hdb_rental_clean'
+    
+    raw_data = read_data_from_db(db_engine, src_table_name)
+    cleaned_data = preprocess_hdb_rental_data(raw_data)
+    save_data_to_db(db_engine, dst_table_name, cleaned_data)
+
+    dst_table_name = 'hdb_rental_avg_year'
+    grouped_data = average_hdb_rental_data_by_year(cleaned_data)
+    save_data_to_db(db_engine, dst_table_name, grouped_data)
+
+    dst_table_name = 'hdb_rental_avg_town'
+    grouped_data = average_hdb_rental_data_by_town(cleaned_data)
+    save_data_to_db(db_engine, dst_table_name, grouped_data)
+
+def process_hdb_resale_price(db_engine):
 
     # Database table name
     src_table_name = 'hdb_resale'
     dst_table_name = 'hdb_resale_clean'
     
     raw_data = read_data_from_db(db_engine, src_table_name)
-    cleaned_data = preprocess_data(raw_data)
+    cleaned_data = preprocess_hdb_resale_data(raw_data)
     save_data_to_db(db_engine, dst_table_name, cleaned_data)
 
     dst_table_name = 'hdb_resale_avg_year'
-    grouped_data = average_data_by_year(cleaned_data)
+    grouped_data = average_hdb_resale_data_by_year(cleaned_data)
     save_data_to_db(db_engine, dst_table_name, grouped_data)
 
     dst_table_name = 'hdb_resale_avg_town'
-    grouped_data = average_data_by_town(cleaned_data)
+    grouped_data = average_hdb_resale_data_by_town(cleaned_data)
     save_data_to_db(db_engine, dst_table_name, grouped_data)
+
+if __name__ == "__main__":
+
+    # Create SQLAlchemy engine
+    db_engine = get_db_engine()
+
+    process_carpark_info(db_engine)
+    process_hdb_rental_price(db_engine)
+    process_hdb_resale_price(db_engine)
+    
+    
