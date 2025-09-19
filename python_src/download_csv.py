@@ -1,12 +1,6 @@
+import os
 import requests
-import json
 import pandas as pd
-# collection_id = 189          
-# url = "https://api-production.data.gov.sg/v2/public/api/collections/{}/metadata".format(collection_id)
-        
-# response = requests.get(url)
-# json_output = json.dumps(response, indent=4)
-# print(json_output)
 
 def download_csv_from_data_gov_sg(dataset_id, csv_filename):
     
@@ -53,10 +47,20 @@ def download_csv_from_data_gov_sg(dataset_id, csv_filename):
 
 if __name__ == "__main__":
 
-    dataset_id = "d_c9f57187485a850908655db0e8cfe651"
-    csv_filename = os.path.join(os.getcwd(), "..", "data", "rental_data.csv")
+    # Append filename to working directory
+    csv_filename = os.path.join(os.getcwd(), "..", "data", "hdb_resale_data.csv")
+
+    dataset_id = "d_8b84c4ee58e3cfc0ece0d773c8ca6abc"
     download_csv_from_data_gov_sg(dataset_id, csv_filename)
 
-    dataset_id = "d_23f946fa557947f93a8043bbef41dd09"
+    # Append filename to working directory
+    csv_filename = os.path.join(os.getcwd(), "..", "data", "hdb_rental_data.csv")
+
+    dataset_id = "d_c9f57187485a850908655db0e8cfe651"
+    download_csv_from_data_gov_sg(dataset_id, csv_filename)
+    
+    # Append filename to working directory
     csv_filename = os.path.join(os.getcwd(), "..", "data", "carpark_data.csv")
+
+    dataset_id = "d_23f946fa557947f93a8043bbef41dd09"
     download_csv_from_data_gov_sg(dataset_id, csv_filename)
