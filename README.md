@@ -13,6 +13,7 @@ pip install SQLAlchemy
 pip install python-dotenv
 pip install python-dateutil
 pip install pandas
+pip install requests
 ```
 
 #### Preparing .env file
@@ -25,16 +26,27 @@ DB_NAME = <to_fill_in_database_name>
 ```
 
 #### Data
-Copy the hdb resale flat prices to the data/ResaleFlatPrices folder
+Copy the following data from data.gov.sg to the data/ folder or running the download_csv.py
 
+Method 1 (Download from data.gov.sg)
+1. Resale flat prices based on registration date from Jan-2017 onwards (save as "hdb_resale_data.csv")
+2. Renting Out of Flats 2025 (save as "hdb_rental_data.csv")
+3. Carpark Availability (save as "carpark_data.csv")
+
+Method 1 (Run download_csv.py)
+```
+python ./download_csv.py
+```
 
 #### Folder Structure
 ```
 ├─ data
-|  └─ ResaleFlatPrices
-|     └─ data.csv
+|  ├─ carpark_data.csv
+|  ├─ hdb_rental_data.csv
+|  └─ hdb_resale_data.csv
 ├─ python_src
 |  ├─ .env
+|  ├─ download_csv.py
 |  ├─ mysql_helper.py
 |  ├─ preprocess_data.py
 |  └─ read_csv_to_db.py
