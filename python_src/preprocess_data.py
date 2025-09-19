@@ -1,27 +1,34 @@
+import os
 import pandas as pd
 from SVY21 import SVY21
+from dotenv import load_dotenv
 from mysql_helper import get_db_engine, read_data_from_db, save_data_to_db
+from postal_code_helper import get_postal, get_town_from_postal
 
-def preprocess_carpark_info_data(data):
+def preprocess_carpark_info_data_using_regex(data):
     
     # Initialize SVY21 class
     cv = SVY21()
     
     process_data = data.copy()
-    process_data[['lat', 'lon']] = process_data.apply(
+    mask = process_data['town']=="Unknown"
+
+    new_values = process_data[mask].apply(
         lambda row: pd.Series(cv.computeLatLon(row['x_coord'], row['y_coord'])),
         axis=1
     )
+    process_data.loc[mask, 'lat'] = new_values.iloc[:, 0].values
+    process_data.loc[mask, 'lon'] = new_values.iloc[:, 1].values
 
     # Clean up the very dirty 'address' column
-    process_data['address'] = process_data['address'].str.replace(r'\s*[/,&-]\s+', '/', regex=True)
-    process_data['address'] = process_data['address'].str.replace(' TO ','-')
-    process_data['address'] = process_data['address'].str.replace('A-B','A/B')
-    process_data['address'] = process_data['address'].str.replace('BLKS','BLK')
-    process_data['address'] = process_data['address'].str.replace(' BETWEEN ','')
-    process_data['address'] = process_data['address'].str.replace(' AND ',',')
-    process_data['address'] = process_data['address'].str.replace('BED0K','BEDOK')
-
+    process_data.loc[mask, 'address'] = process_data.loc[mask, 'address'].str.replace(r'\s*[/,&-]\s+', '/', regex=True)
+    process_data.loc[mask, 'address'] = process_data.loc[mask, 'address'].str.replace(' TO ','-')
+    process_data.loc[mask, 'address'] = process_data.loc[mask, 'address'].str.replace('A-B','A/B')
+    process_data.loc[mask, 'address'] = process_data.loc[mask, 'address'].str.replace('BLKS','BLK')
+    process_data.loc[mask, 'address'] = process_data.loc[mask, 'address'].str.replace(' BETWEEN ','')
+    process_data.loc[mask, 'address'] = process_data.loc[mask, 'address'].str.replace(' AND ',',')
+    process_data.loc[mask, 'address'] = process_data.loc[mask, 'address'].str.replace('BED0K','BEDOK')
+    
     # ------------------
     # Regex explaination
     # ------------------
@@ -34,7 +41,11 @@ def preprocess_carpark_info_data(data):
 
     # Split 'address' into' block' and 'town_and_street'
     pattern = r'^(?:(BLK|BLOCK)\s*)?((?:\d+[A-Za-z]?)(?:[/,\-]\s*(?:\d+[A-Za-z]?|[A-Za-z]))*)\s+(.*)'
-    process_data[['prefix', 'block', 'town_and_street']] = process_data['address'].str.extract(pattern)
+    new_values = process_data.loc[mask, 'address'].str.extract(pattern)
+    process_data.loc[mask, 'prefix'] = new_values.iloc[:, 0].values
+    process_data.loc[mask, 'block'] = new_values.iloc[:, 1].values
+    process_data.loc[mask, 'town_and_street'] = new_values.iloc[:, 2].values
+    #print(process_data[['address', 'block', 'town_and_street']].head(10))
 
     # ------------------
     # Regex explaination
@@ -44,12 +55,44 @@ def preprocess_carpark_info_data(data):
 
     # Split into town, street_type, street_number
     pattern = r'^(.*?)(STREET| ST|AVENUE|CENTRAL)\s+(\d+(?:/\d|)?)\b'
-    process_data[['town', 'street_type', 'street_number']] = process_data['town_and_street'].str.extract(pattern)
+    new_values = process_data.loc[mask, 'town_and_street'].str.extract(pattern)
+    process_data.loc[mask, 'town'] = new_values.iloc[:, 0].values
+    process_data.loc[mask, 'street_type'] = new_values.iloc[:, 1].values
+    process_data.loc[mask, 'street_number'] = new_values.iloc[:, 2].values
+    #print(process_data[['address', 'town_and_street', 'town']].head(10))
 
     # Final cleanup on 'town' column
-    process_data['town'] = process_data['town'].str.replace(r'\s*(ROAD|RD|/)\s*', '', regex=True)
-    process_data['town'] = process_data['town'].str.strip()
+    process_data.loc[mask, 'town'] = process_data.loc[mask, 'town'].str.replace(r'\s*(ROAD|RD|/)\s*', '', regex=True)
+    process_data.loc[mask, 'town'] = process_data.loc[mask, 'town'].str.strip()
 
+    return process_data
+
+def preprocess_carpark_info_using_api(data, token):
+
+    process_data = data.copy()
+
+    # Prepare mask for selected rows
+    #mask = process_data['town'].isnull()
+    mask = pd.Series([True] * len(process_data))
+
+    # Get postal code for selected rows
+    new_values = process_data.loc[mask].apply(
+        lambda row: pd.Series(get_postal(row['x_coord'], row['y_coord'], token)),
+        axis=1
+    )
+    process_data.loc[mask, 'postal_code'] = new_values.iloc[:, 0].values
+    process_data.loc[mask, 'lat'] = new_values.iloc[:, 1].values
+    process_data.loc[mask, 'lon'] = new_values.iloc[:, 2].values
+    #print(process_data[['postal_code', 'lat', 'lon']].head(10))
+
+    # Get town for selected rows
+    new_values = process_data.loc[mask].apply(
+        lambda row: pd.Series(get_town_from_postal(row['postal_code'])),
+        axis=1
+    )
+    process_data.loc[mask, 'town'] = new_values.iloc[:, 0].values
+    #print(process_data[['postal_code', 'lat', 'lon', 'town']].head(10))
+    
     return process_data
 
 def preprocess_hdb_rental_data(data):
@@ -184,13 +227,18 @@ def average_hdb_resale_data_by_town(data):
 
 def process_carpark_info(db_engine):
 
+    load_dotenv()
+    token = os.getenv('ONE_MAP_API_TOKEN')
+
     # Database table name
     src_table_name = 'carpark_info'
     dst_table_name = 'carpark_info_clean'
 
-    raw_data = read_data_from_db(db_engine, src_table_name)
-    cleaned_data = preprocess_carpark_info_data(raw_data)
-    save_data_to_db(db_engine, dst_table_name, cleaned_data)
+    #raw_data = read_data_from_db(db_engine, src_table_name)
+    raw_data = read_data_from_db(db_engine, dst_table_name)
+    #cleaned_data = preprocess_carpark_info_using_api(raw_data, token)
+    cleaned_data = preprocess_carpark_info_data_using_regex(raw_data)
+    save_data_to_db(db_engine, dst_table_name+"2", cleaned_data)
 
 def process_hdb_rental_price(db_engine):
 
@@ -234,5 +282,5 @@ if __name__ == "__main__":
     db_engine = get_db_engine()
 
     process_carpark_info(db_engine)
-    process_hdb_rental_price(db_engine)
-    process_hdb_resale_price(db_engine)
+    #process_hdb_rental_price(db_engine)
+    #process_hdb_resale_price(db_engine)
