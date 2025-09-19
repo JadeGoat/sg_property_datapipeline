@@ -23,6 +23,6 @@ if __name__ == "__main__":
     db_table_name = 'hdb_resale'
 
     # Append filename to working directory
-    csv_file = os.path.join(os.getcwd(), '..', 'data', 'resale_data.csv')
+    csv_file = os.path.join(os.getcwd(), '..', 'data', 'hdb_resale_data.csv')
 
     load_csv_into_database(csv_file, db_config, db_table_name)
