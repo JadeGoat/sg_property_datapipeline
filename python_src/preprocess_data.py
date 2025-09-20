@@ -3,22 +3,50 @@ import pandas as pd
 from SVY21 import SVY21
 from dotenv import load_dotenv
 from mysql_helper import get_db_engine, read_data_from_db, save_data_to_db
-from postal_code_helper import get_postal, get_town_from_postal
+from postal_code_helper import get_postal, get_town_from_postal, map_to_town
+
+def preprocess_carpark_info_using_api(data, token):
+
+    process_data = data.copy()
+
+    # Prepare mask for selected rows
+    #mask = process_data['town'].isnull()
+    mask = pd.Series([True] * len(process_data))
+
+    # Get postal code for selected rows
+    new_values = process_data.loc[mask].apply(
+        lambda row: pd.Series(get_postal(row['x_coord'], row['y_coord'], token)),
+        axis=1
+    )
+    process_data.loc[mask, 'postal_code'] = new_values.iloc[:, 0].values
+    process_data.loc[mask, 'lat'] = new_values.iloc[:, 1].values
+    process_data.loc[mask, 'lon'] = new_values.iloc[:, 2].values
+    #print(process_data[['postal_code', 'lat', 'lon']].head(10))
+
+    return process_data
+
+def preprocess_carpark_info_postal_into_town(data):
+
+    process_data = data.copy()
+
+    # Prepare mask for selected rows
+    #mask = process_data['town'].isnull()
+    mask = pd.Series([True] * len(process_data))
+
+    # Get town for selected rows
+    new_values = process_data.loc[mask].apply(
+        lambda row: pd.Series(get_town_from_postal(row['postal_code'])),
+        axis=1
+    )
+    process_data.loc[mask, 'town'] = new_values.iloc[:, 0].values
+    #print(process_data[['postal_code', 'lat', 'lon', 'town']].head(10))
+
+    return process_data
 
 def preprocess_carpark_info_data_using_regex(data):
     
-    # Initialize SVY21 class
-    cv = SVY21()
-    
     process_data = data.copy()
-    mask = process_data['town']=="Unknown"
-
-    new_values = process_data[mask].apply(
-        lambda row: pd.Series(cv.computeLatLon(row['x_coord'], row['y_coord'])),
-        axis=1
-    )
-    process_data.loc[mask, 'lat'] = new_values.iloc[:, 0].values
-    process_data.loc[mask, 'lon'] = new_values.iloc[:, 1].values
+    mask = process_data['postal_code']=="Unknown"
 
     # Clean up the very dirty 'address' column
     process_data.loc[mask, 'address'] = process_data.loc[mask, 'address'].str.replace(r'\s*[/,&-]\s+', '/', regex=True)
@@ -62,37 +90,45 @@ def preprocess_carpark_info_data_using_regex(data):
     #print(process_data[['address', 'town_and_street', 'town']].head(10))
 
     # Final cleanup on 'town' column
-    process_data.loc[mask, 'town'] = process_data.loc[mask, 'town'].str.replace(r'\s*(ROAD|RD|/)\s*', '', regex=True)
-    process_data.loc[mask, 'town'] = process_data.loc[mask, 'town'].str.strip()
-
-    return process_data
-
-def preprocess_carpark_info_using_api(data, token):
-
-    process_data = data.copy()
-
-    # Prepare mask for selected rows
-    #mask = process_data['town'].isnull()
-    mask = pd.Series([True] * len(process_data))
-
-    # Get postal code for selected rows
+    #process_data.loc[mask, 'town'] = process_data.loc[mask, 'town'].str.replace(r'\s*(ROAD|RD|/)\s*', '', regex=True)
+    #process_data.loc[mask, 'town'] = process_data.loc[mask].str.strip()
     new_values = process_data.loc[mask].apply(
-        lambda row: pd.Series(get_postal(row['x_coord'], row['y_coord'], token)),
-        axis=1
-    )
-    process_data.loc[mask, 'postal_code'] = new_values.iloc[:, 0].values
-    process_data.loc[mask, 'lat'] = new_values.iloc[:, 1].values
-    process_data.loc[mask, 'lon'] = new_values.iloc[:, 2].values
-    #print(process_data[['postal_code', 'lat', 'lon']].head(10))
-
-    # Get town for selected rows
-    new_values = process_data.loc[mask].apply(
-        lambda row: pd.Series(get_town_from_postal(row['postal_code'])),
+        lambda row: pd.Series(map_to_town(row['town'])),
         axis=1
     )
     process_data.loc[mask, 'town'] = new_values.iloc[:, 0].values
-    #print(process_data[['postal_code', 'lat', 'lon', 'town']].head(10))
+
+    return process_data
+
+def preprocess_carpark_info_street_into_town(data):
+
+    process_data = data.copy()
+    mask = process_data['town']=="Unknown"
+
+    # Get town for selected rows
+    new_values =  process_data.loc[mask].apply(
+        lambda row: pd.Series(map_to_town(row['address'])),
+        axis=1
+    )
+    process_data.loc[mask, 'town'] = new_values.iloc[:, 0].values
+
+    return process_data
+
+def preprocess_carpark_info_data_for_svy21(data):
+    # Note: The lat lon conversion is not accurate after testing
+    # Initialize SVY21 class
+    cv = SVY21()
     
+    process_data = data.copy()
+    mask = process_data['postal_code']=="Unknown"
+
+    new_values = process_data[mask].apply(
+        lambda row: pd.Series(cv.computeLatLon(row['x_coord'], row['y_coord'])),
+        axis=1
+    )
+    process_data.loc[mask, 'lat'] = new_values.iloc[:, 0].values
+    process_data.loc[mask, 'lon'] = new_values.iloc[:, 1].values
+
     return process_data
 
 def preprocess_hdb_rental_data(data):
@@ -236,8 +272,16 @@ def process_carpark_info(db_engine):
 
     #raw_data = read_data_from_db(db_engine, src_table_name)
     raw_data = read_data_from_db(db_engine, dst_table_name)
+    
+    # First cut processing using API
     #cleaned_data = preprocess_carpark_info_using_api(raw_data, token)
+    #cleaned_data = preprocess_carpark_info_postal_into_town(cleaned_data)
+
+    # Second cut processing using regex
     cleaned_data = preprocess_carpark_info_data_using_regex(raw_data)
+    cleaned_data = preprocess_carpark_info_street_into_town(cleaned_data)
+    cleaned_data = preprocess_carpark_info_data_for_svy21(cleaned_data)
+    
     save_data_to_db(db_engine, dst_table_name+"2", cleaned_data)
 
 def process_hdb_rental_price(db_engine):
