@@ -280,7 +280,7 @@ def process_carpark_info(db_engine):
 
     # Second cut processing using regex
     dst_table_name = 'carpark_info_clean2'
-    cleaned_data = preprocess_carpark_info_data_using_regex(raw_data)
+    cleaned_data = preprocess_carpark_info_data_using_regex(cleaned_data)
     cleaned_data = preprocess_carpark_info_street_into_town(cleaned_data)
     cleaned_data = preprocess_carpark_info_data_for_svy21(cleaned_data)
 
