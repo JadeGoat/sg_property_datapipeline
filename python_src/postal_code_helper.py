@@ -12,56 +12,58 @@ postal_prefix_to_town = {
     # Clementi
     "11": "Clementi", "12": "Clementi", "13": "Clementi",
     # Queenstown
-    "14": "Queenstown", "16": "Queenstown",
-    # Bukit Merah (resolved overlap)
-    "15": "Bukit Merah",
-    # Bukit Timah (resolved overlap)
+    "14": "Queenstown",
+    # Bukit Merah
+    "15": "Bukit Merah", "16": "Bukit Merah",
+    # Bukit Timah
     "240": "Bukit Timah", "241": "Bukit Timah", "242": "Bukit Timah", "243": "Bukit Timah",
     "244": "Bukit Timah", "245": "Bukit Timah", "246": "Bukit Timah", "247": "Bukit Timah",
     "248": "Bukit Timah", "249": "Bukit Timah",
-    # Bishan  (resolved overlap)
-    "579": "Bishan", "570": "Bishan", "571": "Bishan",
-    # Toa Payoh
-    "31": "Toa Payoh", "32": "Toa Payoh",
-    # Kallang/Whampoa
-    "33": "Kallang/Whampoa", "34": "Kallang/Whampoa",
-    # Geylang
-    "38": "Geylang", "39": "Geylang", "40": "Geylang",
-    # Marine Parade
-    "41": "Marine Parade", "42": "Marine Parade", "43": "Marine Parade",
-    # Bedok
-    "44": "Bedok", "45": "Bedok", "46": "Bedok", "47": "Bedok", "48": "Bedok",
-    # Tampines
-    "49": "Tampines", "50": "Tampines",
-    # Pasir Ris
-    "51": "Pasir Ris", "52": "Pasir Ris", "53": "Pasir Ris",
-    # Hougang
-    "54": "Hougang",
-    # Serangoon
-    "55": "Serangoon",
+    # Bishan
+    "570": "Bishan", "571": "Bishan", "575": "Bishan", "576": "Bishan", "579": "Bishan",
     # Ang Mo Kio
-    "56": "Ang Mo Kio", "57": "Ang Mo Kio",
-    # Jurong East
-    "60": "Jurong East", "61": "Jurong East",
-    # Jurong West
-    "62": "Jurong West", "63": "Jurong West", "64": "Jurong West",
-    # Bukit Batok
-    "65": "Bukit Batok", "66": "Bukit Batok",
-    # Bukit Panjang
-    "67": "Bukit Panjang",
-    # Choa Chu Kang
-    "68": "Choa Chu Kang", "69": "Choa Chu Kang", "70": "Choa Chu Kang", "71": "Choa Chu Kang",
-    # Woodlands
-    "72": "Woodlands", "73": "Woodlands", "74": "Woodlands",
-    # Sembawang
-    "75": "Sembawang", "76": "Sembawang",
-    # Yishun
-    "77": "Yishun", "78": "Yishun",
+    "560": "Ang Mo Kio", "569": "Ang Mo Kio",
+    # Toa Payoh
+    "310": "Toa Payoh", "311": "Toa Payoh",
+    # Kallang/Whampoa
+    "319": "Kallang/Whampoa", "320": "Kallang/Whampoa", "338": "Kallang/Whampoa", "339": "Kallang/Whampoa",
+    # Geylang
+    "380": "Geylang", "389": "Geylang", "399": "Geylang",
+    # Marine Parade
+    "437": "Marine Parade", "438": "Marine Parade", "439": "Marine Parade",
+    # Bedok
+    "460": "Bedok", "461": "Bedok", "462": "Bedok", "465": "Bedok", "466": "Bedok",
+    "467": "Bedok", "468": "Bedok", "469": "Bedok",
+    # Tampines
+    "520": "Tampines", "529": "Tampines",
+    # Pasir Ris
+    "510": "Pasir Ris", "519": "Pasir Ris",
+    # Hougang
+    "530": "Hougang", "538": "Hougang",
     # Sengkang
-    "79": "Sengkang", "80": "Sengkang",
+    "544": "Sengkang", "545": "Sengkang",
+    # Serangoon
+    "550": "Serangoon", "556": "Serangoon",
+    # Jurong East
+    "600": "Jurong East", "609": "Jurong East",
+    # Bukit Batok
+    "650": "Bukit Batok", "659": "Bukit Batok",
+    # Bukit Panjang
+    "670": "Bukit Panjang", "678": "Bukit Panjang",
+    # Choa Chu Kang
+    "680": "Choa Chu Kang", "689": "Choa Chu Kang",
+    # Tengah
+    "690": "Tengah", "691": "Tengah", "692": "Tengah",
+    # Woodlands
+    "730": "Woodlands", "739": "Woodlands", "738": "Woodlands",
+    # Sembawang
+    "750": "Sembawang", "759": "Sembawang",
+    # Yishun
+    "760": "Yishun", "769": "Yishun",
     # Punggol
-    "81": "Punggol", "82": "Punggol"
+    "820": "Punggol", "829": "Punggol"
 }
+
 
 
 def get_town_from_postal(postal_code):
