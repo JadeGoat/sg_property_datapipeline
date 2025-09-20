@@ -110,10 +110,12 @@ sg_town = ["Central Area", "Clementi", "Queenstown", "Bukit Merah", "Bukit Timah
            "Woodlands", "Sembawang", "Yishun", "Sengkang", "Punggol"]
 
 def map_to_town(value):
-    if str(value).title() in sg_town:
-        return value.upper()
-    else:
-        return None
+
+    for town in sg_town:
+        if town.upper() in str(value).upper():
+            return town.upper()
+    
+    return "Unknown"
 
 def get_town_from_postal(postal_code):
 
