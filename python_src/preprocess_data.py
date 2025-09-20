@@ -270,19 +270,21 @@ def process_carpark_info(db_engine):
     src_table_name = 'carpark_info'
     dst_table_name = 'carpark_info_clean'
 
-    #raw_data = read_data_from_db(db_engine, src_table_name)
-    raw_data = read_data_from_db(db_engine, dst_table_name)
+    raw_data = read_data_from_db(db_engine, src_table_name)
+    #raw_data = read_data_from_db(db_engine, dst_table_name)
     
     # First cut processing using API
-    #cleaned_data = preprocess_carpark_info_using_api(raw_data, token)
-    #cleaned_data = preprocess_carpark_info_postal_into_town(cleaned_data)
+    cleaned_data = preprocess_carpark_info_using_api(raw_data, token)
+    cleaned_data = preprocess_carpark_info_postal_into_town(cleaned_data)
+    save_data_to_db(db_engine, dst_table_name, cleaned_data)
 
     # Second cut processing using regex
+    dst_table_name = 'carpark_info_clean2'
     cleaned_data = preprocess_carpark_info_data_using_regex(raw_data)
     cleaned_data = preprocess_carpark_info_street_into_town(cleaned_data)
     cleaned_data = preprocess_carpark_info_data_for_svy21(cleaned_data)
-    
-    save_data_to_db(db_engine, dst_table_name+"2", cleaned_data)
+
+    save_data_to_db(db_engine, dst_table_name, cleaned_data)
 
 def process_hdb_rental_price(db_engine):
 
