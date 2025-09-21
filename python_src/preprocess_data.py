@@ -344,5 +344,5 @@ if __name__ == "__main__":
     db_engine = get_db_engine()
 
     process_carpark_info(db_engine, False)
-    #process_hdb_rental_price(db_engine)
-    #process_hdb_resale_price(db_engine)
+    process_hdb_rental_price(db_engine)
+    process_hdb_resale_price(db_engine)
