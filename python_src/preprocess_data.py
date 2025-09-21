@@ -105,8 +105,8 @@ def preprocess_carpark_info_data_using_regex(data):
 
     return process_data
 
-def preprocess_carpark_info_street_into_town(data):
-    print("Processing carpark info's street into town...")
+def preprocess_carpark_info_address_into_town(data):
+    print("Processing carpark info's address into town...")
     process_data = data.copy()
 
     # Prepare mask for selected rows
@@ -296,8 +296,8 @@ def process_carpark_info(db_engine, process_api=True):
 
     # Second cut processing using regex
     dst_table_name = 'carpark_info_clean2'
-    cleaned_data = preprocess_carpark_info_data_using_regex(cleaned_data)
-    cleaned_data = preprocess_carpark_info_street_into_town(cleaned_data)
+    cleaned_data = preprocess_carpark_info_data_using_regex(cleaned_data) # to review if still required
+    cleaned_data = preprocess_carpark_info_address_into_town(cleaned_data)
     cleaned_data = preprocess_carpark_info_data_for_svy21(cleaned_data)
 
     save_data_to_db(db_engine, dst_table_name, cleaned_data)
