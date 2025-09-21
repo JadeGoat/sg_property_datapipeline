@@ -10,6 +10,7 @@ def preprocess_carpark_info_using_api(data, token):
     process_data = data.copy()
 
     # Prepare mask for selected rows
+    # Note: Written this way so that the function order can be swap easily by modifying mask
     #mask = process_data['town'].isnull()
     mask = pd.Series([True] * len(process_data))
 
@@ -30,6 +31,7 @@ def preprocess_carpark_info_postal_into_town(data):
     process_data = data.copy()
 
     # Prepare mask for selected rows
+    # Note: Written this way so that the function order can be swap easily by modifying mask
     #mask = process_data['town'].isnull()
     mask = pd.Series([True] * len(process_data))
 
@@ -46,6 +48,9 @@ def preprocess_carpark_info_postal_into_town(data):
 def preprocess_carpark_info_data_using_regex(data):
     print("Processing carpark info using regex...")
     process_data = data.copy()
+
+    # Prepare mask for selected rows
+    # Note: Written this way so that the function order can be swap easily by modifying mask
     mask = process_data['postal_code']=="Unknown"
 
     # Clean up the very dirty 'address' column
@@ -103,6 +108,9 @@ def preprocess_carpark_info_data_using_regex(data):
 def preprocess_carpark_info_street_into_town(data):
     print("Processing carpark info's street into town...")
     process_data = data.copy()
+
+    # Prepare mask for selected rows
+    # Note: Written this way so that the function order can be swap easily by modifying mask
     mask = process_data['town']=="Unknown"
 
     # Get town for selected rows
@@ -116,11 +124,14 @@ def preprocess_carpark_info_street_into_town(data):
 
 def preprocess_carpark_info_data_for_svy21(data):
     print("Processing carpark info x_coord, y_coord to lat, lot...")
+    process_data = data.copy()
+
     # Note: The lat lon conversion is not accurate after testing
     # Initialize SVY21 class
     cv = SVY21()
-    
-    process_data = data.copy()
+
+    # Prepare mask for selected rows
+    # Note: Written this way so that the function order can be swap easily by modifying mask
     mask = process_data['postal_code']=="Unknown"
 
     new_values = process_data[mask].apply(
