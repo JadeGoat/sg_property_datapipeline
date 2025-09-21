@@ -6,7 +6,7 @@ from mysql_helper import get_db_engine, read_data_from_db, save_data_to_db
 from postal_code_helper import get_postal, get_town_from_postal, map_to_town
 
 def preprocess_carpark_info_using_api(data, token):
-
+    print("Processing carpark info using api...")
     process_data = data.copy()
 
     # Prepare mask for selected rows
@@ -26,7 +26,7 @@ def preprocess_carpark_info_using_api(data, token):
     return process_data
 
 def preprocess_carpark_info_postal_into_town(data):
-
+    print("Processing carpark info's postal to town...")
     process_data = data.copy()
 
     # Prepare mask for selected rows
@@ -44,7 +44,7 @@ def preprocess_carpark_info_postal_into_town(data):
     return process_data
 
 def preprocess_carpark_info_data_using_regex(data):
-    
+    print("Processing carpark info using regex...")
     process_data = data.copy()
     mask = process_data['postal_code']=="Unknown"
 
@@ -101,7 +101,7 @@ def preprocess_carpark_info_data_using_regex(data):
     return process_data
 
 def preprocess_carpark_info_street_into_town(data):
-
+    print("Processing carpark info's street into town...")
     process_data = data.copy()
     mask = process_data['town']=="Unknown"
 
@@ -115,6 +115,7 @@ def preprocess_carpark_info_street_into_town(data):
     return process_data
 
 def preprocess_carpark_info_data_for_svy21(data):
+    print("Processing carpark info x_coord, y_coord to lat, lot...")
     # Note: The lat lon conversion is not accurate after testing
     # Initialize SVY21 class
     cv = SVY21()
@@ -261,7 +262,7 @@ def average_hdb_resale_data_by_town(data):
 
     return final_data
 
-def process_carpark_info(db_engine):
+def process_carpark_info(db_engine, process_api=True):
 
     load_dotenv()
     token = os.getenv('ONE_MAP_API_TOKEN')
@@ -270,11 +271,14 @@ def process_carpark_info(db_engine):
     src_table_name = 'carpark_info'
     dst_table_name = 'carpark_info_clean'
 
-    raw_data = read_data_from_db(db_engine, src_table_name)
-    #raw_data = read_data_from_db(db_engine, dst_table_name)
+    # Skip process using api if disable as it is time comsuming
+    if (process_api):
+        raw_data = read_data_from_db(db_engine, src_table_name)
+        cleaned_data = preprocess_carpark_info_using_api(raw_data, token)
+    else:
+        cleaned_data = read_data_from_db(db_engine, dst_table_name)
     
     # First cut processing using API
-    cleaned_data = preprocess_carpark_info_using_api(raw_data, token)
     cleaned_data = preprocess_carpark_info_postal_into_town(cleaned_data)
     save_data_to_db(db_engine, dst_table_name, cleaned_data)
 
@@ -327,6 +331,6 @@ if __name__ == "__main__":
     # Create SQLAlchemy engine
     db_engine = get_db_engine()
 
-    process_carpark_info(db_engine)
+    process_carpark_info(db_engine, False)
     #process_hdb_rental_price(db_engine)
     #process_hdb_resale_price(db_engine)
