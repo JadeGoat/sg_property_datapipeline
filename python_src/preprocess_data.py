@@ -274,6 +274,7 @@ def process_carpark_info(db_engine, process_api=True):
     # Skip process using api if disable as it is time comsuming
     if (process_api):
         raw_data = read_data_from_db(db_engine, src_table_name)
+        # First cut processing using API
         cleaned_data = preprocess_carpark_info_using_api(raw_data, token)
     else:
         cleaned_data = read_data_from_db(db_engine, dst_table_name)
