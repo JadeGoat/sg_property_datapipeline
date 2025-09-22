@@ -101,8 +101,8 @@ if __name__ == "__main__":
     geojson_filename_array = [
         "child_care_data.geojson",
         "elderly_care_data.geojson",
-        "hawker_centre.geojson",
-        "healthier_eateries.geojson"
+        "hawker_centre_data.geojson",
+        "healthier_eateries_data.geojson"
     ]
 
     for filename, dataset_id in zip(csv_filename_array, dataset_id_csv_array):
