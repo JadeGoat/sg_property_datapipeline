@@ -35,9 +35,9 @@ Method 1 (Download from data.gov.sg)
 2. Renting Out of Flats 2025 (save as "hdb_rental_data.csv")
 3. Carpark Availability (save as "carpark_data.csv")
 
-Method 1 (Run download_csv.py)
+Method 1 (Run download_data.py)
 ```
-python ./download_csv.py
+python ./download_data.py
 ```
 
 #### Folder Structure
@@ -48,7 +48,7 @@ python ./download_csv.py
 |  └─ hdb_resale_data.csv
 ├─ python_src
 |  ├─ .env
-|  ├─ download_csv.py
+|  ├─ download_data.py
 |  ├─ mysql_helper.py
 |  ├─ preprocess_data.py
 |  └─ read_csv_to_db.py
