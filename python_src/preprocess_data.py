@@ -7,6 +7,7 @@ from mysql_helper import get_db_engine, read_data_from_db, save_data_to_db
 from postal_code_helper import get_postal, get_town_from_postal, map_to_town
 
 def preprocess_carpark_info_using_api(data, token):
+    # Note: Currently, most accurate method of obtain lat, lot, postal code (town)
     print("Processing carpark info using api...")
     process_data = data.copy()
 
@@ -107,6 +108,8 @@ def preprocess_carpark_info_data_using_regex(data):
     return process_data
 
 def preprocess_carpark_info_address_into_town(data):
+    # Note: Best effort to convert address to town. Some erroneous conversion were spotted. 
+    #       eg. upper serangoon rd should be under hougang town
     print("Processing carpark info's address into town...")
     process_data = data.copy()
 
@@ -296,7 +299,7 @@ def process_carpark_info(db_engine, process_api=True):
 
     # Second cut processing using regex
     dst_table_name = 'carpark_info_clean2'
-    cleaned_data = preprocess_carpark_info_data_using_regex(cleaned_data) # to review if still required
+    #cleaned_data = preprocess_carpark_info_data_using_regex(cleaned_data) # not required now, for future expansion
     cleaned_data = preprocess_carpark_info_address_into_town(cleaned_data)
     cleaned_data = preprocess_carpark_info_data_for_svy21(cleaned_data)
 
@@ -344,7 +347,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--api", type=str, help="flag to enable/disable one map api", default=True)
     args = parser.parse_args()
-    
+
     # Convert string to boolean
     flag = str(args.api).strip().lower() in ("true")
 
