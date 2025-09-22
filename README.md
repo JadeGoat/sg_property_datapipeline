@@ -14,6 +14,7 @@ pip install python-dotenv
 pip install python-dateutil
 pip install pandas
 pip install requests
+pip install pyproj
 ```
 
 #### Preparing .env file
@@ -23,6 +24,7 @@ DB_HOST = <to_fill_in_database_url>
 DB_USER = <to_fill_in_database_username>
 DB_PASSWORD = <to_fill_in_database_password>
 DB_NAME = <to_fill_in_database_name>
+ONE_MAP_API_TOKEN = <register_one_map_api_key_and_fill_in>
 ```
 
 #### Data
