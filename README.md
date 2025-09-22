@@ -87,3 +87,8 @@ python ./preprocess_data.py --api=False
 2. preprocess_data.py script reads from the table named 'hdb_resale', cleaned the data and stored into table named 'hdb_resale_clean', further processes the data and stored the proceesed data into two tables named 'hdb_resale_avg_year' and 'hdb_resale_avg_town'.
 
 3. preprocess_data.py script also reads from the table named 'carpark_info', process x_coord, y_coord to lat, lon and split address into useful data (further improvement required, in order to use town column)
+
+# Known Issue
+1. Conversion to town from address consist of part 1 and part 2. 
+Part 1 conversion is more accurate but time comsuming, and requires api update as it expires after some time
+Part 2 conversion is not complete and contains some erroneous conversion (but minor issue, got converted to nearby town)
