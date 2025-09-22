@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-from SVY21 import SVY21
+from pyproj import Transformer
 from dotenv import load_dotenv
 from mysql_helper import get_db_engine, read_data_from_db, save_data_to_db
 from postal_code_helper import get_postal, get_town_from_postal, map_to_town
@@ -126,20 +126,19 @@ def preprocess_carpark_info_data_for_svy21(data):
     print("Processing carpark info x_coord, y_coord to lat, lot...")
     process_data = data.copy()
 
-    # Note: The lat lon conversion is not accurate after testing
-    # Initialize SVY21 class
-    cv = SVY21()
+    # Define the transformer from SVY21 (EPSG:3414) to WGS84 (EPSG:4326)
+    transformer = Transformer.from_crs("EPSG:3414", "EPSG:4326", always_xy=True)
 
     # Prepare mask for selected rows
     # Note: Written this way so that the function order can be swap easily by modifying mask
     mask = process_data['postal_code']=="Unknown"
 
     new_values = process_data[mask].apply(
-        lambda row: pd.Series(cv.computeLatLon(row['x_coord'], row['y_coord'])),
+        lambda row: pd.Series(transformer.transform(row['x_coord'], row['y_coord'])),
         axis=1
     )
-    process_data.loc[mask, 'lat'] = new_values.iloc[:, 0].values
-    process_data.loc[mask, 'lon'] = new_values.iloc[:, 1].values
+    process_data.loc[mask, 'lon'] = new_values.iloc[:, 0].values
+    process_data.loc[mask, 'lat'] = new_values.iloc[:, 1].values
 
     return process_data
 
