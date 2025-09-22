@@ -30,7 +30,7 @@ postal_prefix_to_town = {
     "310": "Toa Payoh", "311": "Toa Payoh", "312": "Toa Payoh", "313": "Toa Payoh",
     "340": "Toa Payoh", "360": "Toa Payoh", # Bidadari
     "350": "Toa Payoh", # Potong Pasir
-    "360": "Toa Payoh", "361": "Toa Payoh", # Upper Aljunied Lane
+    "361": "Toa Payoh", # Upper Aljunied Lane
     # Kallang/Whampoa
     "319": "Kallang/Whampoa", "320": "Kallang/Whampoa", "321": "Kallang/Whampoa", 
     "322": "Kallang/Whampoa", "323": "Kallang/Whampoa", 
