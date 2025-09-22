@@ -34,6 +34,10 @@ Method 1 (Download from data.gov.sg)
 1. Resale flat prices based on registration date from Jan-2017 onwards (save as "hdb_resale_data.csv")
 2. Renting Out of Flats 2025 (save as "hdb_rental_data.csv")
 3. Carpark Availability (save as "carpark_data.csv")
+4. Child Care Services (save as "child_care_data.geojson")
+5. Eldercare Services (save as "elderly_care_data.geojson")
+6. Hawker Centres (save as "hawker_centre_data.geojson")
+7. Healthier Eateries (save as "healthier_eateries.geojson")
 
 Method 1 (Run download_data.py)
 ```
@@ -45,7 +49,11 @@ python ./download_data.py
 ├─ data
 |  ├─ carpark_data.csv
 |  ├─ hdb_rental_data.csv
-|  └─ hdb_resale_data.csv
+|  ├─ hdb_resale_data.csv
+|  ├─ child_care_data.geojson
+|  ├─ elderly_care_data.geojson
+|  ├─ hawker_centre_data.geojson
+|  └─ healthier_eateries_data.geojson
 ├─ python_src
 |  ├─ .env
 |  ├─ download_data.py
