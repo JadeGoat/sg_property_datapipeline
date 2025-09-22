@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import argparse
 from pyproj import Transformer
 from dotenv import load_dotenv
 from mysql_helper import get_db_engine, read_data_from_db, save_data_to_db
@@ -339,9 +340,16 @@ def process_hdb_resale_price(db_engine):
 
 if __name__ == "__main__":
 
+    # Create the parser to process --api arugment
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--api", type=str, help="flag to enable/disable one map api", default=True)
+    args = parser.parse_args()
+    # Convert string to boolean
+    flag = str(args.api).strip().lower() in ("true")
+
     # Create SQLAlchemy engine
     db_engine = get_db_engine()
 
-    process_carpark_info(db_engine, False)
-    #process_hdb_rental_price(db_engine)
-    #process_hdb_resale_price(db_engine)
+    process_carpark_info(db_engine, flag)
+    process_hdb_rental_price(db_engine)
+    process_hdb_resale_price(db_engine)
