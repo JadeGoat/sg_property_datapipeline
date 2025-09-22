@@ -344,6 +344,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--api", type=str, help="flag to enable/disable one map api", default=True)
     args = parser.parse_args()
+    
     # Convert string to boolean
     flag = str(args.api).strip().lower() in ("true")
 
