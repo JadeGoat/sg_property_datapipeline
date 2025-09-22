@@ -16,7 +16,7 @@ def download_csv_from_data_gov_sg(dataset_id, csv_filename):
     url_full = url + "?resource_id="+ dataset_id + "&offset=" + str(offset) + "&limit=" + str(limit)
     response = requests.get(url_full)
     response_json = response.json()
-    print(response_json)
+
     total = response_json['result']['total']
     if (limit > total):
         counter = total
@@ -111,7 +111,7 @@ if __name__ == "__main__":
         csv_filename = os.path.join(os.getcwd(), "..", "data", filename)
 
         print("Downloading " + filename + "...")
-        #download_csv_from_data_gov_sg(dataset_id, csv_filename)
+        download_csv_from_data_gov_sg(dataset_id, csv_filename)
 
     
     for filename, dataset_id in zip(geojson_filename_array, dataset_id_geojson_array):
