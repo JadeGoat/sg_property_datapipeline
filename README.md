@@ -76,6 +76,10 @@ python ./read_csv_to_db.py
 python ./preprocess_data.py
 ```
 
+Other mode
+```
+python ./preprocess_data.py --api=False
+```
 # Explaination
 
 1. read_csv_to_db.py script reads the 'data.csv' and create a table named 'hdb_resale'
