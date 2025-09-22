@@ -1,4 +1,5 @@
 import os
+import json
 import requests
 import pandas as pd
 
@@ -15,13 +16,14 @@ def download_csv_from_data_gov_sg(dataset_id, csv_filename):
     url_full = url + "?resource_id="+ dataset_id + "&offset=" + str(offset) + "&limit=" + str(limit)
     response = requests.get(url_full)
     response_json = response.json()
+    print(response_json)
     total = response_json['result']['total']
     if (limit > total):
         counter = total
     else:
         counter = limit
 
-    # Subsuquent api call
+    # Subsequent api call
     while (len(response_json['result']['records']) > 0):
         
         print("Downloading " + str(counter) + "/" + str(total) + " rows of data...")
@@ -45,9 +47,40 @@ def download_csv_from_data_gov_sg(dataset_id, csv_filename):
     print(result.tail())
     result.to_csv(csv_filename, index=False)
 
+def download_geojson_from_data_gov_sg(dataset_id, csv_filename):
+
+    # First Api call
+    url_full = "https://api-open.data.gov.sg/v1/public/api/datasets/" + dataset_id + "/poll-download"
+    response = requests.get(url_full)
+
+    # Get url from response to download
+    json_data = response.json()
+    if (("code" in json_data.keys()) and (json_data['code'] != 0)):
+        print(json_data['errMsg'])
+        exit(1)
+    elif (len(json_data) == 0):
+        print("Invalid payload")
+        exit(1)
+
+    # Second Api call to download payload
+    if (("data" in json_data.keys()) and ('url' in json_data['data'].keys())):
+        url = json_data['data']['url']
+        response = requests.get(url)
+        json_data = response.json()
+
+        # Save to file
+        with open(csv_filename, "w") as f:
+            json.dump(json_data, f)
+    else:
+        print("Invalid payload")
+        print(json_data.keys())
+        print(json_data)
+    
+
 if __name__ == "__main__":
 
-    dataset_id_array = [
+    # Using api for csv type
+    dataset_id_csv_array = [
         "d_23f946fa557947f93a8043bbef41dd09",
         "d_c9f57187485a850908655db0e8cfe651",
         "d_8b84c4ee58e3cfc0ece0d773c8ca6abc",
@@ -58,12 +91,33 @@ if __name__ == "__main__":
         "hdb_resale_data.csv",
     ]
 
-    for filename, dataset_id in zip(csv_filename_array, dataset_id_array):
+    # Using api for geojson
+    dataset_id_geojson_array = [
+        "d_5d668e3f544335f8028f546827b773b4",
+        "d_f0fd1b3643ed8bd34bd403dedd7c1533",
+        "d_4a086da0a5553be1d89383cd90d07ecd",
+        "d_2925c2ccf75d1c135c2d469e0de3cee6"
+    ]
+    geojson_filename_array = [
+        "child_care_data.geojson",
+        "elderly_care_data.geojson",
+        "hawker_centre.geojson",
+        "healthier_eateries.geojson"
+    ]
+
+    for filename, dataset_id in zip(csv_filename_array, dataset_id_csv_array):
         
         # Append filename to working directory
         csv_filename = os.path.join(os.getcwd(), "..", "data", filename)
 
         print("Downloading " + filename + "...")
-        download_csv_from_data_gov_sg(dataset_id, csv_filename)
+        #download_csv_from_data_gov_sg(dataset_id, csv_filename)
 
     
+    for filename, dataset_id in zip(geojson_filename_array, dataset_id_geojson_array):
+        
+        # Append filename to working directory
+        csv_filename = os.path.join(os.getcwd(), "..", "data", filename)
+
+        print("Downloading " + filename + "...")
+        download_geojson_from_data_gov_sg(dataset_id, csv_filename)
