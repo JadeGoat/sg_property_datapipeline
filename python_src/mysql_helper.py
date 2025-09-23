@@ -1,5 +1,6 @@
 import os
 import csv
+import json
 import geojson
 import pandas as pd
 from dotenv import load_dotenv
@@ -105,7 +106,7 @@ def infer_column_types(sample_rows):
 # - use geojson package
 # ====================================
 def create_table_for_geojson(cursor, table_name):
-    
+
     # Drop table if exists
     cursor.execute(f"DROP TABLE IF EXISTS {table_name}")
     
@@ -114,7 +115,8 @@ def create_table_for_geojson(cursor, table_name):
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 name VARCHAR(255),
                 description TEXT,
-                coordinates TEXT
+                coordinates TEXT,
+                properties JSON
               """
     cursor.execute(f"CREATE TABLE {table_name} ({columns})")
 
@@ -130,13 +132,15 @@ def insert_data_from_geojson(geojson_file, cursor, table_name):
         name = props.get('Name', 'Unnamed')
         description = props.get('Description', '')
         coords = feature['geometry']['coordinates']
+        properties_metadata = feature.get('properties', {})
+        properties_metadata_json = json.dumps(properties_metadata)
 
         # Note: table name is not escaped, while remaining fields are escaped 
         query = f"""
-            INSERT INTO `{table_name}` (name, description, coordinates)
-            VALUES (%s, %s, %s)
+            INSERT INTO `{table_name}` (name, description, coordinates, properties)
+            VALUES (%s, %s, %s, %s)
         """
-        cursor.execute(query, (name, description, str(coords)))
+        cursor.execute(query, (name, description, str(coords), properties_metadata_json))
     
     print(f"GeoJson data loaded into MySQL table '{table_name}' successfully.")
 
