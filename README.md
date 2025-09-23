@@ -31,7 +31,9 @@ ONE_MAP_API_TOKEN = <register_one_map_api_key_and_fill_in>
 #### Data
 Copy the following data from data.gov.sg to the data/ folder or running the download_csv.py
 
-Method 1 (Download from data.gov.sg)
+Method 1 
+
+Download from data.gov.sg
 1. Resale flat prices based on registration date from Jan-2017 onwards (save as "hdb_resale_data.csv")
 2. Renting Out of Flats 2025 (save as "hdb_rental_data.csv")
 3. Carpark Availability (save as "carpark_data.csv")
@@ -40,7 +42,10 @@ Method 1 (Download from data.gov.sg)
 6. Hawker Centres (save as "hawker_centre_data.geojson")
 7. Healthier Eateries (save as "healthier_eateries.geojson")
 
-Method 1 (Run download_data.py)
+Download from lta datamall.gov.sg
+1. Dynamic Dataset, Public Transport, Bus Stops (save as "busstop_data.csv")
+
+Method 2 (Run download_data.py)
 ```
 python ./download_data.py
 ```
@@ -48,6 +53,7 @@ python ./download_data.py
 #### Folder Structure
 ```
 ├─ data
+|  ├─ busstop_data.csv
 |  ├─ carpark_data.csv
 |  ├─ hdb_rental_data.csv
 |  ├─ hdb_resale_data.csv
