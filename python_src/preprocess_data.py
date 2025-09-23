@@ -300,7 +300,7 @@ def process_carpark_info(db_engine, process_api=True):
     # Second cut processing using regex
     dst_table_name = 'carpark_info_clean2'
     #cleaned_data = preprocess_carpark_info_data_using_regex(cleaned_data) # not required now, for future expansion
-    cleaned_data = preprocess_carpark_info_address_into_town(cleaned_data)
+    cleaned_data = preprocess_carpark_info_address_into_town(cleaned_data) # not reliable, to rework mechanisms
     cleaned_data = preprocess_carpark_info_data_for_svy21(cleaned_data)
 
     save_data_to_db(db_engine, dst_table_name, cleaned_data)
