@@ -2,6 +2,7 @@ import os
 import json
 import requests
 import pandas as pd
+from dotenv import load_dotenv
 
 def download_csv_from_data_gov_sg(dataset_id, csv_filename):
     
@@ -76,10 +77,49 @@ def download_geojson_from_data_gov_sg(dataset_id, csv_filename):
         print(json_data.keys())
         print(json_data)
     
+def download_data_from_datamall_lta(csv_filename):
+
+    load_dotenv()
+    acct_key = os.getenv('DATAMALL_ACCT_TOKEN') 
+    headers = {
+        'AccountKey': acct_key,
+        'accept': 'application/json'
+    }
+
+    # Initialize variables
+    skip = 0
+    batch_size = 500
+    result = pd.DataFrame()
+
+    while True:
+
+        # Making the api call
+        url = f"https://datamall2.mytransport.sg/ltaodataservice/BusStops?$skip={skip}"
+        response = requests.get(url, headers=headers)
+
+        # Read data per api call and concat to dataframe
+        if response.status_code == 200:
+            data = response.json()
+            
+            # Exit when no more data
+            if not data['value']:
+                break
+            
+            if 'value' in data.keys():
+                temp_result = pd.DataFrame(data['value'])
+                result = pd.concat([result, temp_result], ignore_index=True)
+        else:
+            print(f"Error: {response.status_code}")
+        
+        # Increase skip counter, for next api call in next batch 
+        skip += batch_size
+
+    print(result.tail())
+    result.to_csv(csv_filename, index=False)
 
 if __name__ == "__main__":
 
-    # Using api for csv type
+    # Using data.gov api for csv type
     dataset_id_csv_array = [
         "d_23f946fa557947f93a8043bbef41dd09",
         "d_c9f57187485a850908655db0e8cfe651",
@@ -91,7 +131,7 @@ if __name__ == "__main__":
         "hdb_resale_data.csv",
     ]
 
-    # Using api for geojson
+    # Using data.gov api for geojson
     dataset_id_geojson_array = [
         "d_5d668e3f544335f8028f546827b773b4",
         "d_f0fd1b3643ed8bd34bd403dedd7c1533",
@@ -105,13 +145,18 @@ if __name__ == "__main__":
         "healthier_eateries_data.geojson"
     ]
 
+    # Using lta datamall api for csv type
+    datamall_filename_array = [
+        "busstop_data.csv",
+    ]
+
     for filename, dataset_id in zip(csv_filename_array, dataset_id_csv_array):
         
         # Append filename to working directory
         csv_filename = os.path.join(os.getcwd(), "..", "data", filename)
 
         print("Downloading " + filename + "...")
-        download_csv_from_data_gov_sg(dataset_id, csv_filename)
+        #download_csv_from_data_gov_sg(dataset_id, csv_filename)
 
     
     for filename, dataset_id in zip(geojson_filename_array, dataset_id_geojson_array):
@@ -120,4 +165,12 @@ if __name__ == "__main__":
         csv_filename = os.path.join(os.getcwd(), "..", "data", filename)
 
         print("Downloading " + filename + "...")
-        download_geojson_from_data_gov_sg(dataset_id, csv_filename)
+        #download_geojson_from_data_gov_sg(dataset_id, csv_filename)
+    
+    for filename in datamall_filename_array:
+
+        # Append filename to working directory
+        csv_filename = os.path.join(os.getcwd(), "..", "data", filename)
+
+        print("Downloading " + filename + "...")
+        download_data_from_datamall_lta(csv_filename)
