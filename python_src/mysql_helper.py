@@ -1,8 +1,11 @@
 import os
 import csv
+import geojson
 import pandas as pd
 from dotenv import load_dotenv
+from shapely.geometry import shape, mapping
 from sqlalchemy import create_engine
+
 from dateutil.parser import parse as parse_date
 
 # Retrieve config for mysql-connector-python package
@@ -96,6 +99,60 @@ def infer_column_types(sample_rows):
         else:
             types.append('INT')
     return types
+
+# ====================================
+# GEOJSON to MySQL functions
+# - use mysql-connector-python package
+# - use geojson package
+# ====================================
+def create_table_for_geojson(cursor, table_name):
+    
+    # Drop table if exists
+    cursor.execute(f"DROP TABLE IF EXISTS {table_name}")
+    
+    # Create table (if not exists)
+    columns = """
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(255),
+                description TEXT,
+                coordinates TEXT,
+                geom GEOMETRY NOT NULL,
+                SPATIAL INDEX(geom)
+              """
+    cursor.execute(f"CREATE TABLE {table_name} ({columns})")
+
+def insert_data_from_geojson(geojson_file, cursor, table_name):
+
+    # Load GeoJSON file
+    with open(geojson_file) as f:
+        data = geojson.load(f)
+
+    # Insert each feature
+    for feature in data['features']:
+        props = feature.get('properties', {})
+        name = props.get('Name', 'Unnamed')
+        description = props.get('Description', '')
+        geometry = shape(feature['geometry'])
+        geometry_2d = strip_z(geometry)
+        wkt = geometry_2d.wkt
+        coords = feature['geometry']['coordinates']
+
+        # Note: table name is not escaped, while remaining fields are escaped 
+        query = f"""
+            INSERT INTO `{table_name}` (name, description, coordinates, geom)
+            VALUES (%s, %s, %s, ST_GeomFromText(%s))
+        """
+        cursor.execute(query, (name, description, str(coords), wkt))
+    
+    print(f"GeoJson data loaded into MySQL table '{table_name}' successfully.")
+
+# Remove Z dimension
+def strip_z(geom):
+    geom_2d = shape(mapping(geom))
+    if geom_2d.has_z:
+        coords_2d = [(x, y) for x, y, *_ in geom_2d.coords]
+        return type(geom_2d)(coords_2d)
+    return geom_2d
 
 # =========================
 # MySQL operation functions
