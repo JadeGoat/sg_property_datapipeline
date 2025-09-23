@@ -10,7 +10,7 @@ python -m virtualenv sg_property_env
 .\sg_property_env\Scripts\activate
 pip install mysql-connector-python
 pip install SQLAlchemy
-pip install geojson shapely
+pip install geojson 
 pip install python-dotenv
 pip install python-dateutil
 pip install pandas
