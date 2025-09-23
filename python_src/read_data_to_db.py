@@ -39,14 +39,16 @@ if __name__ == "__main__":
     
     # Tabular storage for csv type
     db_table_name_csv_array = [
-        'carpark_info', 
         'hdb_rental', 
-        'hdb_resale'
+        'hdb_resale',
+        'carpark_info', 
+        'bus_stop_info'
     ]
     csv_filename_array = [
-        "carpark_data.csv",
         "hdb_rental_data.csv",
         "hdb_resale_data.csv",
+        "carpark_data.csv",
+        "busstop_data.csv",
     ]
 
     # Json Storage for geojson type
