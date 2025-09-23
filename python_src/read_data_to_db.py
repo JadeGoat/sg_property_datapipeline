@@ -70,7 +70,7 @@ if __name__ == "__main__":
         csv_filename = os.path.join(os.getcwd(), '..', 'data', filename)
 
         print("Loading " + filename + " to database table " + db_table_name + "...")
-        #load_csv_into_database(csv_filename, db_config, db_table_name)
+        load_csv_into_database(csv_filename, db_config, db_table_name)
 
     for filename, db_table_name in zip(geojson_filename_array, db_table_name_geojson_array):
         
