@@ -10,6 +10,7 @@ python -m virtualenv sg_property_env
 .\sg_property_env\Scripts\activate
 pip install mysql-connector-python
 pip install SQLAlchemy
+pip install geojson shapely
 pip install python-dotenv
 pip install python-dateutil
 pip install pandas
@@ -58,8 +59,9 @@ python ./download_data.py
 |  ├─ .env
 |  ├─ download_data.py
 |  ├─ mysql_helper.py
+|  ├─ postal_code_helper.py
 |  ├─ preprocess_data.py
-|  └─ read_csv_to_db.py
+|  └─ read_data_to_db.py
 ├─ sg_property_env
 ├─ .gitignore
 └─ README.md
@@ -80,7 +82,7 @@ CREATE DATABASE sg_property_db;
 #### Running scripts
 ```
 cd python_src
-python ./read_csv_to_db.py
+python ./read_data_to_db.py
 python ./preprocess_data.py
 ```
 
