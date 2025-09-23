@@ -305,6 +305,15 @@ def process_carpark_info(db_engine, process_api=True):
 
     save_data_to_db(db_engine, dst_table_name, cleaned_data)
 
+def process_bus_stop_info(db_engine):
+
+    # Database table name
+    src_table_name = 'bus_stop_info'
+    dst_table_name = 'bus_stop_info_clean'
+
+    raw_data = read_data_from_db(db_engine, src_table_name)
+    save_data_to_db(db_engine, dst_table_name, raw_data)
+
 def process_hdb_rental_price(db_engine):
 
     # Database table name
@@ -354,6 +363,7 @@ if __name__ == "__main__":
     # Create SQLAlchemy engine
     db_engine = get_db_engine()
 
-    process_carpark_info(db_engine, flag)
     process_hdb_rental_price(db_engine)
     process_hdb_resale_price(db_engine)
+    process_carpark_info(db_engine, flag)
+    process_bus_stop_info(db_engine)
