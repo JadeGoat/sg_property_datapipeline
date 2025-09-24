@@ -109,6 +109,6 @@ python ./preprocess_data.py --api=False
 # Known Issue
 Conversion to town from address consist of part 1 and part 2. 
 
-Part 1 conversion is more accurate but time comsuming, and requires api update as it expires after some time
+Part 1 conversion is more accurate but time comsuming, and requires api update as it expires after 3 days
 
 Part 2 conversion is not complete and contains some erroneous conversion (but minor issue, got converted to nearby town)
