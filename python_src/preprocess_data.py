@@ -9,7 +9,8 @@ from preprocess_data_hdb import preprocess_hdb_rental_data, average_hdb_rental_d
 from preprocess_data_hdb import average_hdb_rental_data_by_year, average_hdb_resale_data_by_town
 
 from preprocess_data_carpark import preprocess_carpark_info_using_api, preprocess_carpark_info_postal_into_town
-#from preprocess_data_carpark import preprocess_carpark_info_data_using_regex, preprocess_carpark_info_address_into_town
+from preprocess_data_carpark import preprocess_carpark_info_address_into_town
+#from preprocess_data_carpark import preprocess_carpark_info_data_using_regex, 
 from preprocess_data_carpark import preprocess_carpark_info_data_for_svy21
 from preprocess_data_bus_stop import preprocess_bus_stop_info_using_api, preprocess_bus_stop_info_postal_into_town
 
@@ -37,6 +38,7 @@ def process_carpark_info(db_engine, process_api=True):
     # Second cut processing using regex
     dst_table_name = 'carpark_info_clean2'
     #cleaned_data = preprocess_carpark_info_data_using_regex(cleaned_data) # not required now, for future expansion
+    cleaned_data = preprocess_carpark_info_address_into_town(cleaned_data) # not reliable, otherwise missing town info
     cleaned_data = preprocess_carpark_info_data_for_svy21(cleaned_data)
 
     save_data_to_db(db_engine, dst_table_name, cleaned_data)
