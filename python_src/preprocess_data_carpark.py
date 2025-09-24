@@ -112,7 +112,7 @@ def preprocess_carpark_info_address_into_town(data):
 
     # Prepare mask for selected rows
     # Note: Written this way so that the function order can be swap easily by modifying mask
-    mask = process_data['town']=="Unknown"
+    mask = process_data['town']=='["UNKNOWN"]'
 
     # Get town for selected rows
     new_values =  process_data.loc[mask].apply(
