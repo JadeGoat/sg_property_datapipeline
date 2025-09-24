@@ -108,7 +108,7 @@ if __name__ == "__main__":
     # Create SQLAlchemy engine
     db_engine = get_db_engine()
 
-    #process_hdb_rental_price(db_engine)
-    #process_hdb_resale_price(db_engine)
+    process_hdb_rental_price(db_engine)
+    process_hdb_resale_price(db_engine)
     process_carpark_info(db_engine, flag)
     #process_bus_stop_info(db_engine, flag)
