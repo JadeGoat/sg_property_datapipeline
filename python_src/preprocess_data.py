@@ -4,7 +4,8 @@ import argparse
 from pyproj import Transformer
 from dotenv import load_dotenv
 from mysql_helper import get_db_engine, read_data_from_db, save_data_to_db
-from postal_code_helper import get_postal, get_town_from_postal, map_to_town
+from postal_code_helper import get_postal_from_svy21, get_postal_from_address
+from postal_code_helper import get_town_from_postal, map_to_town
 
 def preprocess_carpark_info_using_api(data, token):
     # Note: Currently, most accurate method of obtain lat, lot, postal code (town)
@@ -18,7 +19,7 @@ def preprocess_carpark_info_using_api(data, token):
 
     # Get postal code for selected rows
     new_values = process_data.loc[mask].apply(
-        lambda row: pd.Series(get_postal(row['x_coord'], row['y_coord'], token)),
+        lambda row: pd.Series(get_postal_from_svy21(row['x_coord'], row['y_coord'], token)),
         axis=1
     )
     process_data.loc[mask, 'postal_code'] = new_values.iloc[:, 0].values
@@ -42,6 +43,7 @@ def preprocess_carpark_info_postal_into_town(data):
         lambda row: pd.Series(get_town_from_postal(row['postal_code'])),
         axis=1
     )
+
     process_data.loc[mask, 'town'] = new_values.iloc[:, 0].values
     #print(process_data[['postal_code', 'lat', 'lon', 'town']].head(10))
 
@@ -143,6 +145,48 @@ def preprocess_carpark_info_data_for_svy21(data):
     )
     process_data.loc[mask, 'lon'] = new_values.iloc[:, 0].values
     process_data.loc[mask, 'lat'] = new_values.iloc[:, 1].values
+
+    return process_data
+
+def preprocess_bus_stop_info_using_api(data, token):
+    # Note: Currently, most accurate method of obtain lat, lot, postal code (town)
+    print("Processing bus stop info using api...")
+    process_data = data.copy()
+
+    # Prepare mask for selected rows
+    # Note: Written this way so that the function order can be swap easily by modifying mask
+    #mask = process_data['town'].isnull()
+    mask = pd.Series([True] * len(process_data))
+
+    # Get postal code for selected rows
+    new_values = process_data.loc[mask].apply(
+        lambda row: pd.Series(get_postal_from_address(row['RoadName'], token)),
+        axis=1
+    )
+    process_data.loc[mask, 'postal_code'] = new_values.iloc[:, 0].values
+    process_data.loc[mask, 'lat'] = new_values.iloc[:, 1].values
+    process_data.loc[mask, 'lon'] = new_values.iloc[:, 2].values
+    #print(process_data[['postal_code', 'lat', 'lon']].head(10))
+
+    return process_data
+
+def preprocess_bus_stop_info_postal_into_town(data):
+    print("Processing bus stop info's postal into town...")
+    process_data = data.copy()
+
+    # Prepare mask for selected rows
+    # Note: Written this way so that the function order can be swap easily by modifying mask
+    #mask = process_data['town'].isnull()
+    mask = pd.Series([True] * len(process_data))
+
+    # Get town for selected rows
+    new_values = process_data.loc[mask].apply(
+        lambda row: pd.Series(get_town_from_postal(row['postal_code'])),
+        axis=1
+    )
+
+    process_data.loc[mask, 'town'] = new_values.iloc[:, 0].values
+    #print(process_data[['postal_code', 'Latitude', 'Longitude', 'town']].head(10))
 
     return process_data
 
@@ -293,26 +337,34 @@ def process_carpark_info(db_engine, process_api=True):
     else:
         cleaned_data = read_data_from_db(db_engine, dst_table_name)
     
-    # First cut processing using API
+    # First cut processing
     cleaned_data = preprocess_carpark_info_postal_into_town(cleaned_data)
     save_data_to_db(db_engine, dst_table_name, cleaned_data)
 
     # Second cut processing using regex
     dst_table_name = 'carpark_info_clean2'
     #cleaned_data = preprocess_carpark_info_data_using_regex(cleaned_data) # not required now, for future expansion
-    cleaned_data = preprocess_carpark_info_address_into_town(cleaned_data) # not reliable, to rework mechanisms
     cleaned_data = preprocess_carpark_info_data_for_svy21(cleaned_data)
 
     save_data_to_db(db_engine, dst_table_name, cleaned_data)
 
-def process_bus_stop_info(db_engine):
+def process_bus_stop_info(db_engine, process_api=True):
+
+    load_dotenv()
+    token = os.getenv('ONE_MAP_API_TOKEN')
 
     # Database table name
     src_table_name = 'bus_stop_info'
     dst_table_name = 'bus_stop_info_clean'
 
-    raw_data = read_data_from_db(db_engine, src_table_name)
-    save_data_to_db(db_engine, dst_table_name, raw_data)
+    if (process_api):
+        raw_data = read_data_from_db(db_engine, src_table_name)
+        cleaned_data = preprocess_bus_stop_info_using_api(raw_data, token)
+    else:
+        cleaned_data = read_data_from_db(db_engine, dst_table_name)
+
+    cleaned_data = preprocess_bus_stop_info_postal_into_town(cleaned_data)
+    save_data_to_db(db_engine, dst_table_name, cleaned_data)
 
 def process_hdb_rental_price(db_engine):
 
@@ -363,7 +415,7 @@ if __name__ == "__main__":
     # Create SQLAlchemy engine
     db_engine = get_db_engine()
 
-    process_hdb_rental_price(db_engine)
-    process_hdb_resale_price(db_engine)
+    #process_hdb_rental_price(db_engine)
+    #process_hdb_resale_price(db_engine)
     process_carpark_info(db_engine, flag)
-    process_bus_stop_info(db_engine)
+    #process_bus_stop_info(db_engine, flag)
