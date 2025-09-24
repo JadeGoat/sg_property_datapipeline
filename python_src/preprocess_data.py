@@ -32,7 +32,7 @@ def process_carpark_info(db_engine, process_api=True):
         cleaned_data = read_data_from_db(db_engine, dst_table_name)
     
     # First cut processing
-    cleaned_data = preprocess_carpark_info_postal_into_town(cleaned_data)
+    cleaned_data = preprocess_carpark_info_postal_into_town(cleaned_data) 
     save_data_to_db(db_engine, dst_table_name, cleaned_data)
 
     # Second cut processing using regex
