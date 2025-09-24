@@ -151,14 +151,19 @@ def insert_data_from_geojson(geojson_file, cursor, table_name):
 def read_data_from_db(engine, table_name):
     
     query = "SELECT * FROM " + table_name
-    data = pd.read_sql(query , con=engine)
-    print("Data read from MySQL table '" + table_name + "'")
-
+    try:
+        data = pd.read_sql(query , con=engine)
+        print("Data read from MySQL table '" + table_name + "'")
+    except:
+        print("Error read operation")
+        return None
+    
     return data
 
 def save_data_to_db(engine, table_name, data, save_index=False):
     
-    data.to_sql(name=table_name, con=engine, if_exists='replace', index=save_index)
-    print("Data written to MySQL table '" + table_name + "'")
-
-    return data
+    try:
+        data.to_sql(name=table_name, con=engine, if_exists='replace', index=save_index)
+        print("Data written to MySQL table '" + table_name + "'")
+    except:
+        print("Error write operation")

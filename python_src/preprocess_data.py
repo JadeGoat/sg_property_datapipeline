@@ -26,11 +26,13 @@ def process_carpark_info(db_engine, process_api=True):
     # Skip process using api if disable as it is time comsuming
     if (process_api):
         raw_data = read_data_from_db(db_engine, src_table_name)
-        # First cut processing using API
         cleaned_data = preprocess_carpark_info_using_api(raw_data, token)
     else:
+        # Attempt to read from existing clean table, otherwise raw table
         cleaned_data = read_data_from_db(db_engine, dst_table_name)
-    
+        if (cleaned_data is None): 
+            cleaned_data = read_data_from_db(db_engine, src_table_name)
+
     # First cut processing
     cleaned_data = preprocess_carpark_info_postal_into_town(cleaned_data) 
     save_data_to_db(db_engine, dst_table_name, cleaned_data)
@@ -56,9 +58,12 @@ def process_bus_stop_info(db_engine, process_api=True):
         raw_data = read_data_from_db(db_engine, src_table_name)
         cleaned_data = preprocess_bus_stop_info_using_api(raw_data, token)
     else:
+        # Attempt to read from existing clean table, otherwise raw table
         cleaned_data = read_data_from_db(db_engine, dst_table_name)
+        if cleaned_data is None: 
+            cleaned_data = read_data_from_db(db_engine, src_table_name)
 
-    cleaned_data = preprocess_bus_stop_info_postal_into_town(cleaned_data)
+    #cleaned_data = preprocess_bus_stop_info_postal_into_town(cleaned_data)
     save_data_to_db(db_engine, dst_table_name, cleaned_data)
 
 def process_hdb_rental_price(db_engine):
