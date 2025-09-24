@@ -229,7 +229,6 @@ range_to_towns = {
     (890, 899): ["Punggol"],
     (900, 999): ["Bedok"]
 }
-# Bukit Batok, , "Bukit Timah" Toa Payoh
 
 sg_town = ["Central", "Clementi", "Queenstown", "Bukit Merah", "Bukit Timah", "Bishan", "Ang Mo Kio",  
            "Toa Payoh", "Kallang/Whampoa", "Geylang", "Marine Parade", "Bedok", "Tampines", "Pasir Ris", "Hougang",   
