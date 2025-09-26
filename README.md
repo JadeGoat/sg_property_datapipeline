@@ -28,6 +28,12 @@ DB_NAME = <to_fill_in_database_name>
 ONE_MAP_API_TOKEN = <register_one_map_api_key_and_fill_in>
 ```
 
+Optional (Required for get_onemap_token.py script)
+```
+ONE_MAP_API_EMAIL = <email_that_registered_with_one_map_and_fill_in>
+ONE_MAP_API_PASSWORD = <password_used_with_email_with_one_map_and_fill_in>
+```
+
 #### Data
 Copy the following data from data.gov.sg to the data/ folder or running the download_csv.py
 
@@ -64,6 +70,7 @@ python ./download_data.py
 ├─ python_src
 |  ├─ .env
 |  ├─ download_data.py
+|  ├─ get_onemap_token.py
 |  ├─ mysql_helper.py
 |  ├─ postal_code_helper.py
 |  ├─ preprocess_data.py
@@ -96,6 +103,12 @@ Other mode
 ```
 python ./preprocess_data.py --api=False
 ```
+
+Get new one map api key
+```
+python ./get_onemap_token.py
+```
+
 # Explaination
 
 1. read_data_to_db.py script reads the 'hdb_resale.csv' and create a table named 'hdb_resale'. It will also create 'hdb_rental' table as well as part of the csv to be processed.
