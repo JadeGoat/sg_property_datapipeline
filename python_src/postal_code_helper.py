@@ -177,7 +177,7 @@ def get_postal_from_address(address, token):
     # Make the request
     response = requests.get(url, headers=headers, params=params)
     data = response.json()
-    print(data)
+
     try:
         postal_code = data["results"][0]["POSTAL"]
         latitude = data["results"][0].get("LATITUDE", "Unknown")
