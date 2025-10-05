@@ -12,7 +12,48 @@ from preprocess_data_carpark import preprocess_carpark_info_using_api, preproces
 from preprocess_data_carpark import preprocess_carpark_info_address_into_town
 #from preprocess_data_carpark import preprocess_carpark_info_data_using_regex, 
 from preprocess_data_carpark import preprocess_carpark_info_data_for_svy21
+
 from preprocess_data_mrt_station import preprocess_mrt_station_info_data
+from preprocess_geojson_data import preprocess_child_care_info_data, preprocess_elderly_care_info_data
+from preprocess_geojson_data import preprocess_disability_services_info_data, preprocess_chas_clinic_info_data
+from preprocess_geojson_data import preprocess_hawker_centre_info_data, preprocess_healthier_eateries_info_data
+from preprocess_geojson_data import preprocess_supermarkets_info_data
+
+def process_hdb_rental_price(db_engine):
+
+    # Database table name
+    src_table_name = 'hdb_rental'
+    dst_table_name = 'hdb_rental_clean'
+    
+    raw_data = read_data_from_db(db_engine, src_table_name)
+    cleaned_data = preprocess_hdb_rental_data(raw_data)
+    save_data_to_db(db_engine, dst_table_name, cleaned_data)
+
+    dst_table_name = 'hdb_rental_avg_year'
+    grouped_data = average_hdb_rental_data_by_year(cleaned_data)
+    save_data_to_db(db_engine, dst_table_name, grouped_data)
+
+    dst_table_name = 'hdb_rental_avg_town'
+    grouped_data = average_hdb_rental_data_by_town(cleaned_data)
+    save_data_to_db(db_engine, dst_table_name, grouped_data)
+
+def process_hdb_resale_price(db_engine):
+
+    # Database table name
+    src_table_name = 'hdb_resale'
+    dst_table_name = 'hdb_resale_clean'
+    
+    raw_data = read_data_from_db(db_engine, src_table_name)
+    cleaned_data = preprocess_hdb_resale_data(raw_data)
+    save_data_to_db(db_engine, dst_table_name, cleaned_data)
+
+    dst_table_name = 'hdb_resale_avg_year'
+    grouped_data = average_hdb_resale_data_by_year(cleaned_data)
+    save_data_to_db(db_engine, dst_table_name, grouped_data)
+
+    dst_table_name = 'hdb_resale_avg_town'
+    grouped_data = average_hdb_resale_data_by_town(cleaned_data)
+    save_data_to_db(db_engine, dst_table_name, grouped_data)
 
 def process_carpark_info(db_engine, process_api=True):
 
@@ -54,41 +95,69 @@ def process_mrt_station_info(db_engine):
     cleaned_data = preprocess_mrt_station_info_data(raw_data)
     save_data_to_db(db_engine, dst_table_name, cleaned_data)
 
-def process_hdb_rental_price(db_engine):
-
+def process_child_care(db_engine):
     # Database table name
-    src_table_name = 'hdb_rental'
-    dst_table_name = 'hdb_rental_clean'
-    
+    src_table_name = 'child_care'
+    dst_table_name = 'child_care_clean'
+
     raw_data = read_data_from_db(db_engine, src_table_name)
-    cleaned_data = preprocess_hdb_rental_data(raw_data)
+    cleaned_data = preprocess_child_care_info_data(raw_data)
     save_data_to_db(db_engine, dst_table_name, cleaned_data)
 
-    dst_table_name = 'hdb_rental_avg_year'
-    grouped_data = average_hdb_rental_data_by_year(cleaned_data)
-    save_data_to_db(db_engine, dst_table_name, grouped_data)
-
-    dst_table_name = 'hdb_rental_avg_town'
-    grouped_data = average_hdb_rental_data_by_town(cleaned_data)
-    save_data_to_db(db_engine, dst_table_name, grouped_data)
-
-def process_hdb_resale_price(db_engine):
-
+def process_elderly_care(db_engine):
     # Database table name
-    src_table_name = 'hdb_resale'
-    dst_table_name = 'hdb_resale_clean'
-    
+    src_table_name = 'elderly_care'
+    dst_table_name = 'elderly_care_clean'
+
     raw_data = read_data_from_db(db_engine, src_table_name)
-    cleaned_data = preprocess_hdb_resale_data(raw_data)
+    cleaned_data = preprocess_elderly_care_info_data(raw_data)
     save_data_to_db(db_engine, dst_table_name, cleaned_data)
 
-    dst_table_name = 'hdb_resale_avg_year'
-    grouped_data = average_hdb_resale_data_by_year(cleaned_data)
-    save_data_to_db(db_engine, dst_table_name, grouped_data)
+def process_disability_services(db_engine):
+    # Database table name
+    src_table_name = 'disability_services'
+    dst_table_name = 'disability_services_clean'
 
-    dst_table_name = 'hdb_resale_avg_town'
-    grouped_data = average_hdb_resale_data_by_town(cleaned_data)
-    save_data_to_db(db_engine, dst_table_name, grouped_data)
+    raw_data = read_data_from_db(db_engine, src_table_name)
+    cleaned_data = preprocess_disability_services_info_data(raw_data)
+    save_data_to_db(db_engine, dst_table_name, cleaned_data)
+
+def process_chas_clinic(db_engine):
+    # Database table name
+    src_table_name = 'chas_clinic'
+    dst_table_name = 'chas_clinic_clean'
+
+    raw_data = read_data_from_db(db_engine, src_table_name)
+    cleaned_data = preprocess_chas_clinic_info_data(raw_data)
+    save_data_to_db(db_engine, dst_table_name, cleaned_data)
+
+def process_hawker_centre_data(db_engine):
+    # Database table name
+    src_table_name = 'hawker_centre'
+    dst_table_name = 'hawker_centre_clean'
+
+    raw_data = read_data_from_db(db_engine, src_table_name)
+    cleaned_data = preprocess_hawker_centre_info_data(raw_data)
+    save_data_to_db(db_engine, dst_table_name, cleaned_data)
+
+def process_healthier_eateries_data(db_engine):
+    # Database table name
+    src_table_name = 'healthier_eateries'
+    dst_table_name = 'healthier_eateries_clean'
+
+    raw_data = read_data_from_db(db_engine, src_table_name)
+    cleaned_data = preprocess_healthier_eateries_info_data(raw_data)
+    save_data_to_db(db_engine, dst_table_name, cleaned_data)
+
+def process_supermarkets_data(db_engine):
+    # Database table name
+    src_table_name = 'supermarkets'
+    dst_table_name = 'supermarkets_clean'
+
+    raw_data = read_data_from_db(db_engine, src_table_name)
+    cleaned_data = preprocess_supermarkets_info_data(raw_data)
+    save_data_to_db(db_engine, dst_table_name, cleaned_data)
+
 
 if __name__ == "__main__":
 
@@ -103,7 +172,15 @@ if __name__ == "__main__":
     # Create SQLAlchemy engine
     db_engine = get_db_engine()
 
-    process_hdb_rental_price(db_engine)
-    process_hdb_resale_price(db_engine)
-    process_carpark_info(db_engine, flag)
-    process_mrt_station_info(db_engine)
+    #process_hdb_rental_price(db_engine)
+    #process_hdb_resale_price(db_engine)
+    #process_carpark_info(db_engine, flag)
+    #process_mrt_station_info(db_engine)
+    process_child_care(db_engine)
+    process_elderly_care(db_engine)
+    process_disability_services(db_engine)
+    process_chas_clinic(db_engine)
+    process_hawker_centre_data(db_engine)
+    process_healthier_eateries_data(db_engine)
+    process_supermarkets_data(db_engine)
+    
