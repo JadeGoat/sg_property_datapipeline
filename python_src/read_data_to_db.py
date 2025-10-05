@@ -94,7 +94,7 @@ if __name__ == "__main__":
         csv_filename = os.path.join(os.getcwd(), '..', 'data', filename)
 
         print("Loading " + filename + " to database table " + db_table_name + "...")
-        #load_csv_into_database(csv_filename, db_config, db_table_name)
+        load_csv_into_database(csv_filename, db_config, db_table_name)
 
     for filename, db_table_name in zip(geojson_filename_array, db_table_name_geojson_array):
         
@@ -102,7 +102,7 @@ if __name__ == "__main__":
         geojson_filename = os.path.join(os.getcwd(), '..', 'data', filename)
 
         print("Loading " + filename + " to database table " + db_table_name + "...")
-        #load_geojson_into_database(geojson_filename, db_config, db_table_name)
+        load_geojson_into_database(geojson_filename, db_config, db_table_name)
 
     for filename, db_table_name in zip(kml_filename_array, db_table_name_kml_array):
         
