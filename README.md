@@ -53,7 +53,7 @@ Download from data.gov.sg
 5. Eldercare Services (save as "elderly_care_data.geojson")
 6. Hawker Centres (save as "hawker_centre_data.geojson")
 7. Healthier Eateries (save as "healthier_eateries.geojson")
-8. LTAMRTStationExitKML (save as "lta_mrt.kml")
+8. LTA MRT Station Exit (save as "lta_mrt_station.geojson")
 
 Download from lta datamall.gov.sg
 1. Dynamic Dataset, Public Transport, Bus Stops (save as "busstop_data.csv")
