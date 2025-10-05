@@ -47,6 +47,7 @@ Download from data.gov.sg
 5. Eldercare Services (save as "elderly_care_data.geojson")
 6. Hawker Centres (save as "hawker_centre_data.geojson")
 7. Healthier Eateries (save as "healthier_eateries.geojson")
+8. LTAMRTStationExitKML (save as "lta_mrt.kml")
 
 Download from lta datamall.gov.sg
 1. Dynamic Dataset, Public Transport, Bus Stops (save as "busstop_data.csv")
@@ -113,11 +114,13 @@ python ./get_onemap_token.py
 
 1. read_data_to_db.py script reads the 'hdb_resale.csv' and create a table named 'hdb_resale'. It will also create 'hdb_rental' table as well as part of the csv to be processed.
 
-2. read_data_to_db.py script also reads the 'child_care_data.geojson' and create a table named 'child_care'. It will also create 'elderly_care', 'hawker_centre', 'healthier_eateries' tables as well as part of the geojson to be processed.
+2. read_data_to_db.py script also reads the 'child_care_data.geojson' and create a table named 'child_care'. It will also create 'elderly_care', 'hawker_centre', 'healthier_eateries' tables as well as part of the geojson to be processed. 
 
-3. preprocess_data.py script reads from the table named 'hdb_resale', cleaned the data and stored into table named 'hdb_resale_clean', further processes the data and stored the proceesed data into two tables named 'hdb_resale_avg_year' and 'hdb_resale_avg_town'. Similarly processing is performed on 'hdb_rental' table.
+3. read_data_to_db.py script also processing kml file for 'lta_mrt' table was included in later stages.
 
-4. preprocess_data.py script also reads from the table named 'carpark_info', process x_coord, y_coord to lat, lon and split address into useful data (further improvement required, in order to use town column)
+4. preprocess_data.py script reads from the table named 'hdb_resale', cleaned the data and stored into table named 'hdb_resale_clean', further processes the data and stored the proceesed data into two tables named 'hdb_resale_avg_year' and 'hdb_resale_avg_town'. Similarly processing is performed on 'hdb_rental' table.
+
+5. preprocess_data.py script also reads from the table named 'carpark_info', process x_coord, y_coord to lat, lon and split address into useful data (further improvement required, in order to use town column)
 
 # Known Issue
 Conversion to town from address consist of part 1 and part 2. 
