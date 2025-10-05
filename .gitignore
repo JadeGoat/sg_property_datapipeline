@@ -1,6 +1,7 @@
 # exclude data files
 data/*.csv
 data/*.geojson
+data/*.kml
 data/ResaleFlatPrices/*.csv
 
 # exclude python cache folder and env file
