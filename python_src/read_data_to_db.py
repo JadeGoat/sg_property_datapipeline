@@ -70,14 +70,20 @@ if __name__ == "__main__":
     db_table_name_geojson_array = [
         'child_care', 
         'elderly_care', 
+        'disability_services', 
         'hawker_centre', 
-        'healthier_eateries'
+        'healthier_eateries',
+        "supermarkets",
+        "chas_clinic",
     ]
     geojson_filename_array = [
         "child_care_data.geojson",
         "elderly_care_data.geojson",
+        "disability_services.geojson",
         "hawker_centre_data.geojson",
         "healthier_eateries_data.geojson",
+        "supermarkets.geojson",
+        "chas_clinic.geojson",
     ]
 
     # Longtext storage for kml type
@@ -94,7 +100,7 @@ if __name__ == "__main__":
         csv_filename = os.path.join(os.getcwd(), '..', 'data', filename)
 
         print("Loading " + filename + " to database table " + db_table_name + "...")
-        load_csv_into_database(csv_filename, db_config, db_table_name)
+        #load_csv_into_database(csv_filename, db_config, db_table_name)
 
     for filename, db_table_name in zip(geojson_filename_array, db_table_name_geojson_array):
         
@@ -110,4 +116,4 @@ if __name__ == "__main__":
         kml_filename = os.path.join(os.getcwd(), '..', 'data', filename)
 
         print("Loading " + filename + " to database table " + db_table_name + "...")
-        load_kml_into_database(kml_filename, db_config, db_table_name)
+        #load_kml_into_database(kml_filename, db_config, db_table_name)

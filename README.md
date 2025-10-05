@@ -115,9 +115,9 @@ python ./get_onemap_token.py
 
 1. read_data_to_db.py script reads the 'hdb_resale.csv' and create a table named 'hdb_resale'. It will also create 'hdb_rental' table as well as part of the csv to be processed.
 
-2. read_data_to_db.py script also reads the 'child_care_data.geojson' and create a table named 'child_care'. It will also create 'elderly_care', 'hawker_centre', 'healthier_eateries' tables as well as part of the geojson to be processed. 
+2. read_data_to_db.py script also reads the 'child_care_data.geojson' and create a table named 'child_care'. It will also create 'elderly_care', 'disability_services', 'hawker_centre', 'healthier_eateries', 'supermarkets', 'chas_clinic' tables as well as part of the geojson to be processed. 
 
-3. read_data_to_db.py script also processing kml file for 'lta_mrt' table was included in later stages.
+3. read_data_to_db.py script also process kml file for 'lta_mrt' table as it was included in later stages.
 
 4. preprocess_data.py script reads from the table named 'hdb_resale', cleaned the data and stored into table named 'hdb_resale_clean', further processes the data and stored the proceesed data into two tables named 'hdb_resale_avg_year' and 'hdb_resale_avg_town'. Similarly processing is performed on 'hdb_rental' table.
 

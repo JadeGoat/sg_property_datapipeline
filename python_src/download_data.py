@@ -146,15 +146,21 @@ if __name__ == "__main__":
     dataset_id_geojson_array = [
         "d_5d668e3f544335f8028f546827b773b4",
         "d_f0fd1b3643ed8bd34bd403dedd7c1533",
+        "d_9bde6cb42dce64ebaf2dc7ccc2db6201",
         "d_4a086da0a5553be1d89383cd90d07ecd",
         "d_2925c2ccf75d1c135c2d469e0de3cee6",
+        "d_cac2c32f01960a3ad7202a99c27268a0",
+        "d_548c33ea2d99e29ec63a7cc9edcccedc",
         "d_f820139ee3b0865b5512cf61ab7d1122",
     ]
     geojson_kml_filename_array = [
         "child_care_data.geojson",
         "elderly_care_data.geojson",
+        "disability_services.geojson",
         "hawker_centre_data.geojson",
         "healthier_eateries_data.geojson",
+        "supermarkets.geojson",
+        "chas_clinic.geojson",
         "lta_mrt.kml"
     ]
 
