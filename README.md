@@ -11,12 +11,17 @@ python -m virtualenv sg_property_env
 pip install mysql-connector-python
 pip install SQLAlchemy
 pip install geojson 
-pip install lxml
+pip install beautifulsoup4
 pip install python-dotenv
 pip install python-dateutil
 pip install pandas
 pip install requests
 pip install pyproj
+```
+
+Optional for processing kml files
+```
+pip install lxml
 ```
 
 #### Preparing .env file
