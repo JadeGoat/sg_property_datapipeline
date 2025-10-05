@@ -11,6 +11,7 @@ python -m virtualenv sg_property_env
 pip install mysql-connector-python
 pip install SQLAlchemy
 pip install geojson 
+pip install lxml
 pip install python-dotenv
 pip install python-dateutil
 pip install pandas
