@@ -144,6 +144,37 @@ def insert_data_from_geojson(geojson_file, cursor, table_name):
     
     print(f"GeoJson data loaded into MySQL table '{table_name}' successfully.")
 
+# ====================================
+# KML to MySQL functions
+# - use mysql-connector-python package
+# ====================================
+def create_table_for_kml(cursor, table_name):
+
+    # Drop table if exists
+    cursor.execute(f"DROP TABLE IF EXISTS {table_name}")
+
+    # Create table (if not exists)
+    columns = """
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                kml_content LONGTEXT
+              """
+    cursor.execute(f"CREATE TABLE {table_name} ({columns})")
+
+def insert_data_from_kml(kml_file, cursor, table_name):
+
+    # Load KML file
+    with open(kml_file, "r", encoding="utf-8") as f:
+        kml_data = f.read()
+
+    # Insert data
+    query = f"""
+                INSERT INTO `{table_name}` (kml_content)
+                VALUES (%s)
+            """
+    cursor.execute(query, (kml_data, ))
+    
+    print(f"KML data loaded into MySQL table '{table_name}' successfully.")
+
 # =========================
 # MySQL operation functions
 # - use sqlalchemy package
