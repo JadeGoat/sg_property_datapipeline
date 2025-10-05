@@ -89,8 +89,8 @@ def process_carpark_info(db_engine, process_api=True):
 
 def process_mrt_station_info(db_engine):
     # Database table name
-    src_table_name = 'lta_mrt'
-    dst_table_name = 'lta_mrt_clean'
+    src_table_name = 'lta_mrt_station'
+    dst_table_name = 'lta_mrt_station_clean'
 
     raw_data = read_data_from_db(db_engine, src_table_name)
     cleaned_data = preprocess_mrt_station_info_data(raw_data)
@@ -174,18 +174,18 @@ if __name__ == "__main__":
     db_engine = get_db_engine()
 
     # Csv data
-    #process_hdb_rental_price(db_engine)
-    #process_hdb_resale_price(db_engine)
-    #process_carpark_info(db_engine, flag)
+    process_hdb_rental_price(db_engine)
+    process_hdb_resale_price(db_engine)
+    process_carpark_info(db_engine, flag)
 
     # GeoJson data
     process_mrt_station_info(db_engine)
-    #process_child_care(db_engine)
-    #process_elderly_care(db_engine)
-    #process_disability_services(db_engine)
-    #process_chas_clinic(db_engine)
-    #process_hawker_centre_data(db_engine)
-    #process_healthier_eateries_data(db_engine)
-    #process_supermarkets_data(db_engine)
+    process_child_care(db_engine)
+    process_elderly_care(db_engine)
+    process_disability_services(db_engine)
+    process_chas_clinic(db_engine)
+    process_hawker_centre_data(db_engine)
+    process_healthier_eateries_data(db_engine)
+    process_supermarkets_data(db_engine)
 
     

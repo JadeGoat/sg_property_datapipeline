@@ -8,16 +8,12 @@ def preprocess_mrt_station_info_data(data):
     process_data = process_data.rename(columns={'name': 'kml_name'})
 
     # Extract metadata from description
-    col_name = ["ADDRESSPOSTALCODE", "ADDRESSSTREETNAME", "NAME"]
+    col_name = ["STATION_NA", "EXIT_CODE"]
     col_name_lower = [col.lower() for col in col_name]
     process_data[col_name_lower] = process_data.apply(
                                         lambda row: pd.Series(extract_table_metadata(row['description'], col_name)),
                                         axis=1
                                    )
-    # Padding postal code with 5 digits
-    process_data["addresspostalcode"] = process_data["addresspostalcode"].apply(
-                                            lambda x: "0" + x if len(x) == 5 else x
-                                        )
     
     # Split coordinates
     process_data[['lat', 'lon']] = process_data.apply(
@@ -27,7 +23,7 @@ def preprocess_mrt_station_info_data(data):
 
     # Final cleanup on columns
     process_data.drop(columns=['coordinates', 'description', 'properties'], inplace=True)
-
+    process_data = process_data.rename(columns={'station_na': 'station_name'})
     return process_data
 
 def preprocess_child_care_info_data(data):
