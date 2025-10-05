@@ -12,7 +12,6 @@ from preprocess_data_carpark import preprocess_carpark_info_using_api, preproces
 from preprocess_data_carpark import preprocess_carpark_info_address_into_town
 #from preprocess_data_carpark import preprocess_carpark_info_data_using_regex, 
 from preprocess_data_carpark import preprocess_carpark_info_data_for_svy21
-from preprocess_data_bus_stop import preprocess_bus_stop_info_using_api, preprocess_bus_stop_info_postal_into_town
 from preprocess_data_mrt_station import preprocess_mrt_station_info_data
 
 def process_carpark_info(db_engine, process_api=True):
@@ -44,27 +43,6 @@ def process_carpark_info(db_engine, process_api=True):
     cleaned_data = preprocess_carpark_info_address_into_town(cleaned_data) # not reliable, otherwise missing town info
     cleaned_data = preprocess_carpark_info_data_for_svy21(cleaned_data)
 
-    save_data_to_db(db_engine, dst_table_name, cleaned_data)
-
-def process_bus_stop_info(db_engine, process_api=True):
-
-    load_dotenv()
-    token = os.getenv('ONE_MAP_API_TOKEN')
-
-    # Database table name
-    src_table_name = 'bus_stop_info'
-    dst_table_name = 'bus_stop_info_clean'
-
-    if (process_api):
-        raw_data = read_data_from_db(db_engine, src_table_name)
-        cleaned_data = preprocess_bus_stop_info_using_api(raw_data, token)
-    else:
-        # Attempt to read from existing clean table, otherwise raw table
-        cleaned_data = read_data_from_db(db_engine, dst_table_name)
-        if cleaned_data is None: 
-            cleaned_data = read_data_from_db(db_engine, src_table_name)
-
-    #cleaned_data = preprocess_bus_stop_info_postal_into_town(cleaned_data) # not required now, for future expansion
     save_data_to_db(db_engine, dst_table_name, cleaned_data)
 
 def process_mrt_station_info(db_engine):
@@ -128,5 +106,4 @@ if __name__ == "__main__":
     process_hdb_rental_price(db_engine)
     process_hdb_resale_price(db_engine)
     process_carpark_info(db_engine, flag)
-    process_bus_stop_info(db_engine, flag)
     process_mrt_station_info(db_engine)
