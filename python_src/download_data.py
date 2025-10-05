@@ -48,7 +48,7 @@ def download_csv_from_data_gov_sg(dataset_id, csv_filename):
     print(result.tail())
     result.to_csv(csv_filename, index=False)
 
-def download_geojson_from_data_gov_sg(dataset_id, csv_filename):
+def download_geojson_kml_from_data_gov_sg(dataset_id, filename):
 
     # First Api call
     url_full = "https://api-open.data.gov.sg/v1/public/api/datasets/" + dataset_id + "/poll-download"
@@ -67,11 +67,22 @@ def download_geojson_from_data_gov_sg(dataset_id, csv_filename):
     if (("data" in json_data.keys()) and ('url' in json_data['data'].keys())):
         url = json_data['data']['url']
         response = requests.get(url)
-        json_data = response.json()
+        
+        extension = os.path.splitext(filename)[1]
+        if extension == ".geojson":
+            # Save goejson file
+            json_data = response.json()
+            with open(filename, "w") as f:
+                json.dump(json_data, f)
 
-        # Save to file
-        with open(csv_filename, "w") as f:
-            json.dump(json_data, f)
+        elif extension == ".kml":
+            # Save kml file
+            kml_data = response.text
+            with open(filename, "w") as f:
+                f.write(kml_data)
+        else:
+            print("Invalid extension")
+
     else:
         print("Invalid payload")
         print(json_data.keys())
@@ -133,16 +144,18 @@ if __name__ == "__main__":
 
     # Using data.gov api for geojson
     dataset_id_geojson_array = [
-        "d_5d668e3f544335f8028f546827b773b4",
-        "d_f0fd1b3643ed8bd34bd403dedd7c1533",
-        "d_4a086da0a5553be1d89383cd90d07ecd",
-        "d_2925c2ccf75d1c135c2d469e0de3cee6"
+        #"d_5d668e3f544335f8028f546827b773b4",
+        #"d_f0fd1b3643ed8bd34bd403dedd7c1533",
+        #"d_4a086da0a5553be1d89383cd90d07ecd",
+        "d_2925c2ccf75d1c135c2d469e0de3cee6",
+        "d_f820139ee3b0865b5512cf61ab7d1122",
     ]
     geojson_filename_array = [
-        "child_care_data.geojson",
-        "elderly_care_data.geojson",
-        "hawker_centre_data.geojson",
-        "healthier_eateries_data.geojson"
+        #"child_care_data.geojson",
+        #"elderly_care_data.geojson",
+        #"hawker_centre_data.geojson",
+        "healthier_eateries_data.geojson",
+        "lta_mrt.kml"
     ]
 
     # Using lta datamall api for csv type
@@ -165,7 +178,7 @@ if __name__ == "__main__":
         csv_filename = os.path.join(os.getcwd(), "..", "data", filename)
 
         print("Downloading " + filename + "...")
-        #download_geojson_from_data_gov_sg(dataset_id, csv_filename)
+        download_geojson_kml_from_data_gov_sg(dataset_id, csv_filename)
     
     for filename in datamall_filename_array:
 
@@ -173,4 +186,4 @@ if __name__ == "__main__":
         csv_filename = os.path.join(os.getcwd(), "..", "data", filename)
 
         print("Downloading " + filename + "...")
-        download_data_from_datamall_lta(csv_filename)
+        #download_data_from_datamall_lta(csv_filename)
