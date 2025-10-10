@@ -31,6 +31,7 @@ DB_HOST = <to_fill_in_database_url>
 DB_USER = <to_fill_in_database_username>
 DB_PASSWORD = <to_fill_in_database_password>
 DB_NAME = <to_fill_in_database_name>
+DATAMALL_ACCT_TOKEN = <register_lta_datamall_key_and_fill_in>
 ONE_MAP_API_TOKEN = <register_one_map_api_key_and_fill_in>
 ```
 
