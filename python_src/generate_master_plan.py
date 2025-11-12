@@ -18,7 +18,7 @@ def fetch_general_planning_area(year, token):
         if 'SearchResults' in data.keys():
             planning_data = {}
             results = data["SearchResults"]
-            
+
             for result in results:
                 area = result['pln_area_n']
                 print(f"Processing {area}...")
@@ -57,7 +57,7 @@ def fetch_master_planning_area(year, token):
         print(response.text)
     return None
 
-def compare_generalplans(gdf1_dict, gdf2_dict, year1, year2):
+def compare_general_plans(gdf1_dict, gdf2_dict, year1, year2):
     
     if gdf1_dict is not None and gdf2_dict is not None:
 
@@ -82,7 +82,7 @@ def compare_generalplans(gdf1_dict, gdf2_dict, year1, year2):
     else:
         print("Missing plot data")
 
-def compare_masterplans(gdf1, gdf2, year1, year2):
+def compare_master_plans(gdf1, gdf2, year1, year2):
 
     if gdf1 is not None and gdf2 is not None:
         
@@ -107,8 +107,8 @@ if __name__ == "__main__":
 
     general_plan_2014 = fetch_general_planning_area(2014, token)
     general_plan_2019 = fetch_general_planning_area(2019, token)
-    compare_generalplans(general_plan_2014, general_plan_2019, 2014, 2019)
+    compare_general_plans(general_plan_2014, general_plan_2019, 2014, 2019)
 
     #gdf_2014 = fetch_master_planning_area(2014, token)
     #gdf_2019 = fetch_master_planning_area(2019, token)
-    #compare_masterplans(gdf_2014, gdf_2019, 2014, 2019)
+    #compare_master_plans(gdf_2014, gdf_2019, 2014, 2019)
