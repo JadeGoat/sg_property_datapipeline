@@ -14,6 +14,7 @@ pip install geojson
 pip install beautifulsoup4
 pip install python-dotenv
 pip install python-dateutil
+pip install geopandas
 pip install pandas
 pip install requests
 pip install pyproj
