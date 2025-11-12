@@ -131,6 +131,8 @@ python ./get_onemap_token.py
 
 5. preprocess_data.py script also reads from the table named 'carpark_info', process x_coord, y_coord to lat, lon and split address into useful data (further improvement required, in order to use town column)
 
+6. add draft district zone map scripts, pending access to masterplan api.
+
 # Known Issue
 Conversion to town from address consist of part 1 and part 2. 
 
