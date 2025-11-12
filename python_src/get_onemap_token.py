@@ -2,10 +2,9 @@ import os
 import requests
 from dotenv import load_dotenv
 
-if __name__ == "__main__":
+def get_token():
 
     load_dotenv()
-    token = os.getenv('ONE_MAP_API_TOKEN')
     acct_email = os.getenv('ONE_MAP_API_EMAIL')
     acct_password = os.getenv('ONE_MAP_API_PASSWORD')
 
@@ -21,10 +20,18 @@ if __name__ == "__main__":
     if (response.status_code == 200):
         data = response.json()
         if 'access_token' in data.keys():
-            print(data['access_token'])
+            return data['access_token']
         else:
             print("Invalid response structure")
     else:
         print(response.text)
+
+    return None
+
+if __name__ == "__main__":
+    
+    token = get_token()
+    print(token)
+    
 
     
