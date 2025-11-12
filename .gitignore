@@ -3,6 +3,7 @@ data/*.csv
 data/*.geojson
 data/*.kml
 data/ResaleFlatPrices/*.csv
+data/maps/*.png
 
 # exclude python cache folder and env file
 python_src/__pycache__/
