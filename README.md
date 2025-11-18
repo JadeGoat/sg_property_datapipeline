@@ -80,10 +80,15 @@ python ./download_data.py
 ├─ python_src
 |  ├─ .env
 |  ├─ download_data.py
+|  ├─ download_planning_area.py
 |  ├─ get_onemap_token.py
 |  ├─ mysql_helper.py
 |  ├─ postal_code_helper.py
+|  ├─ preprocess_data_carpark.py
+|  ├─ preprocess_data_hdb.py
 |  ├─ preprocess_data.py
+|  ├─ preprocess_data_geojson.py
+|  ├─ preprocess_data_kml_data.py
 |  └─ read_data_to_db.py
 ├─ sg_property_env
 ├─ .gitignore
@@ -107,6 +112,7 @@ CREATE DATABASE sg_property_db;
 cd python_src
 python ./read_data_to_db.py
 python ./preprocess_data.py
+python ./download_planning_area.py
 ```
 
 Other mode
@@ -131,7 +137,7 @@ python ./get_onemap_token.py
 
 5. preprocess_data.py script also reads from the table named 'carpark_info', process x_coord, y_coord to lat, lon and split address into useful data (further improvement required, in order to use town column)
 
-6. add draft district zone map scripts, pending access to masterplan api.
+6. added district zone map scripts into database using onemap api.
 
 # Known Issue
 Conversion to town from address consist of part 1 and part 2. 
