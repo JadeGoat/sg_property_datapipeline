@@ -175,6 +175,35 @@ def insert_data_from_kml(kml_file, cursor, table_name):
     
     print(f"KML data loaded into MySQL table '{table_name}' successfully.")
 
+# ====================================
+# GeoDataFrames to MySQL functions
+# - use mysql-connector-python package
+# ====================================
+def create_table_for_geo_dataframes(cursor, table_name):
+
+    # Drop table if exists
+    cursor.execute(f"DROP TABLE IF EXISTS {table_name}")
+
+    # Create table (if not exists)
+    columns = """
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                town_area VARCHAR(255),
+                town_boundary MULTIPOLYGON NOT NULL,
+                SPATIAL INDEX(town_boundary)
+              """
+    cursor.execute(f"CREATE TABLE {table_name} ({columns})")
+
+def insert_data_from_geo_dataframes(town_name, town_boundary, cursor, table_name):
+
+    # Insert data
+    query = f"""
+                INSERT INTO `{table_name}` (town_area, town_boundary)
+                VALUES (%s, ST_GeomFromText(%s))
+            """
+    cursor.execute(query, (town_name, town_boundary.wkt))
+    
+    print(f"Geo Dataframes ({town_name}) loaded into MySQL table '{table_name}' successfully.")
+
 # =========================
 # MySQL operation functions
 # - use sqlalchemy package
